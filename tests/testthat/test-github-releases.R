@@ -10,45 +10,44 @@ test_that("github_release", {
   path <- github_release_path(info$repo)
   exists <- file.exists(path)
 
-  expect_that(info, is_a("github_release_info"))
-  expect_that(info$path, is_a("character"))
-  expect_that(info$path, equals(path))
-  expect_that(file.exists(info$path), equals(exists))
+  expect_is(info, "github_release_info")
+  expect_is(info$path, "character")
+  expect_identical(info$path, path)
+  expect_identical(file.exists(info$path), exists)
 
   ## for testing use a temporary file
   path <- tempfile("dataverse_")
   on.exit(unlink(path, recursive=TRUE))
   info <- github_release_info("wcornwell/taxonlookup", read_csv, path=path)
-  expect_that(info$path, equals(path))
-  expect_that(file.exists(path), is_false())
+  expect_identical(info$path, path)
+  expect_false(file.exists(path))
 
   st <- storr_github_release(info)
-  expect_that(file.exists(path), is_true())
-  expect_that(st, is_a("storr"))
-  expect_that(st$list(), equals(character(0)))
+  expect_true(file.exists(path))
+  expect_is(st, "storr")
+  expect_identical(st$list(), character(0))
 
   skip_if_no_downloads()
-  expect_that(github_release_versions(info), equals(character(0)))
+  expect_identical(github_release_versions(info), character(0))
 
   tmp <- github_release_versions(info, FALSE)
-  expect_that(length(tmp), is_more_than(9))
+  expect_more_than(length(tmp), 9)
 
   tmp <- github_release_version_current(info)
-  expect_that(numeric_version(tmp) >= numeric_version("1.0.0"),
-              is_true())
+  expect_true(numeric_version(tmp) >= numeric_version("1.0.0"))
 
   dat <- github_release_get(info)
 
-  expect_that(dat, is_a("data.frame"))
-  expect_that(st$list(), equals(tmp))
-  expect_that(github_release_versions(info), equals(tmp))
+  expect_is(dat, "data.frame")
+  expect_identical(st$list(), tmp)
+  expect_identical(github_release_versions(info), tmp)
 
   github_release_del(info, tmp)
-  expect_that(github_release_versions(info, TRUE),
-              equals(character(0)))
-  expect_that(file.exists(path), is_true())
+  expect_identical(github_release_versions(info, TRUE),
+                   character(0))
+  expect_true(file.exists(path))
   github_release_del(info, NULL)
-  expect_that(file.exists(path), is_false())
+  expect_false(file.exists(path))
 })
 
 test_that("create releases", {
@@ -98,10 +97,10 @@ test_that("create releases", {
   x2 <- github_release_create(info, version2, filename=filename, yes=TRUE)
 
   d <- github_api_releases(info)
-  expect_that(length(d), equals(2))
+  expect_equals(length(d), 2)
 
   x <- github_release_versions(info, FALSE)
-  expect_that(x, equals(c("0.0.1", "0.0.2")))
+  expect_equals(x, equals(c("0.0.1", "0.0.2")))
 
   github_api_delete_all_releases(info)
 })
