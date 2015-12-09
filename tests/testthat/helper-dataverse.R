@@ -11,6 +11,12 @@ skip_unless_internet <- function() {
   }
   skip("No internet :(")
 }
+skip_if_no_github_token <- function() {
+  if (inherits(github_api_token(FALSE), "request")) {
+    return()
+  }
+  skip("No GITHUB_TOKEN set")
+}
 has_internet <- function() {
   !is.null(suppressWarnings(nsl("www.google.com")))
 }

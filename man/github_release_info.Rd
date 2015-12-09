@@ -4,12 +4,19 @@
 \alias{github_release_info}
 \title{Github release information}
 \usage{
-github_release_info(repo, read, filename = NULL, path = NULL)
+github_release_info(repo, read, private = FALSE, filename = NULL,
+  path = NULL)
 }
 \arguments{
 \item{repo}{Name of the repo in \code{username/repo} format.}
 
 \item{read}{Function to read the file.  See Details.}
+
+\item{private}{Is the repository private?  If so authentication
+will be required for all actions.  Setting this is optional but
+will result in better error messages because of the way GitHub
+returns not found/404 (rather than forbidden/403) errors when
+accessing private repositories without authorisation.}
 
 \item{filename}{Optional filename.  If omitted, all files in the
 release can be used.  If the filename contains a star ("*") it

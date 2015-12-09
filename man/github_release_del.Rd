@@ -9,9 +9,11 @@ github_release_del(info, version)
 \arguments{
 \item{info}{Result of running \code{github_release_info}}
 
-\item{version}{Version to delete.  If \code{NULL} it will delete the entire storr}
+\item{version}{Version to delete.  If \code{NULL} it will delete
+the entire storr}
 }
 \description{
-Delete a local copy of a version (or the entire thing).
+Delete a local copy of a version (or all local copies).  Note that
+that does not affect the actual github release in any way!.
 }
 
