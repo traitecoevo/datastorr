@@ -57,7 +57,7 @@ which will print to the screen a bunch of code to add do your package.  There wi
 Once set up, new releases can be made by running, within your package directory:
 
 ```r
-datastorr.example("description of release", "path/to/file")
+datastorr.example::mydata_release("description of release", "path/to/file")
 ```
 
 provided you have your `GITHUB_TOKEN` environment variable set appropriatey.  See the vignette for more details.
