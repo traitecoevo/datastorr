@@ -45,7 +45,22 @@ Downloads are cached across sessions using `rappdirs`.
 
 ## Package developer process
 
-For now, see the file [here](https://github.com/richfitz/datastorr.example/blob/master/R/package.R).
+The simplest way is to run the (hidden) function `datastorr:::autogenerate`, as
+
+
+```r
+datastorr:::autogenerate(repo="richfitz/datastorr.example", read="readRDS", name="mydata")
+```
+
+which will print to the screen a bunch of code to add do your package.  There will be a vignette explaining this more fully soon.  A file generated in this way can be seen  [here](https://github.com/richfitz/datastorr.example/blob/master/R/package.R).
+
+Once set up, new releases can be made by running, within your package directory:
+
+```r
+datastorr.example("description of release", "path/to/file")
+```
+
+provided you have your `GITHUB_TOKEN` environment variable set appropriatey.  See the vignette for more details.
 
 ## Installation
 
