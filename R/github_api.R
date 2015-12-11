@@ -76,7 +76,11 @@ github_api_releases <- function(info) {
   httr::content(dat)
 }
 
-github_api_release_delete <- function(info, version) {
+github_api_release_delete <- function(info, version, yes=FALSE) {
+  message(sprintf("Deleting version %s from %s", version, info$repo))
+  if (!yes && !prompt_confirm()) {
+    stop("Not deleting release")
+  }
   x <- github_api_release_info(info, version)
 
   r <- httr::DELETE(x$url, github_api_token(TRUE))
@@ -146,6 +150,14 @@ github_api_ref <- function(info, ref, type="heads") {
                  info$repo, type, ref)
   r <- httr::GET(url, github_api_token(info$private))
   httr::stop_for_status(r)
+  httr::content(r)
+}
+
+github_api_commit <- function(info, sha) {
+  url <- sprintf("https://api.github.com/repos/%s/git/commits/%s",
+                 info$repo, sha)
+  r <- httr::GET(url, github_api_token(info$private))
+  github_api_catch_error(r)
   httr::content(r)
 }
 

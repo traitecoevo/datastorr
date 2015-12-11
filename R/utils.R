@@ -31,3 +31,18 @@ prompt_confirm <- function(msg="continue?", valid=c(n=FALSE, y=TRUE),
 dquote <- function(x) {
   sprintf('"%s"', x)
 }
+
+## Will this work on windows?
+find_package_root <- function(stop_by="/") {
+  root <- normalizePath(stop_by, mustWork=TRUE)
+  f <- function(path) {
+    if (file.exists(file.path(path, "DESCRIPTION"))) {
+      return(path)
+    }
+    if (normalizePath(path, mustWork=TRUE) == root) {
+      stop("Hit the root without finding a package")
+    }
+    Recall(file.path("..", path))
+  }
+  normalizePath(f("."), mustWork=TRUE)
+}

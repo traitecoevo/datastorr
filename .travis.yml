@@ -11,7 +11,7 @@ before_install:
 
 install:
   - ./pkg-build.sh install_deps
-  - ./pkg-build.sh install_github richfitz/storr@simplify
+  - ./pkg-build.sh install_github richfitz/storr@refactor
 
 script:
   - ./pkg-build.sh run_tests

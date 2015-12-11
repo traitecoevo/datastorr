@@ -45,7 +45,7 @@ github_release_info <- function(repo, read,
 
 ##' @importFrom rappdirs user_data_dir
 github_release_path <- function(repo) {
-  rappdirs::user_data_dir(file.path("dataverse", repo))
+  rappdirs::user_data_dir(file.path("datastorr", repo))
 }
 
 ##' Get release versions
@@ -76,7 +76,11 @@ github_release_version_current <- function(info, local=TRUE) {
   if (length(v) == 0L && local) {
     v <- github_release_versions(info, FALSE)
   }
-  v[[length(v)]]
+  if (length(v) == 0L) {
+    NULL
+  } else {
+    v[[length(v)]]
+  }
 }
 
 ##' Get a version of a data set, downloading it if necessary.
@@ -113,57 +117,6 @@ github_release_del <- function(info, version) {
   } else {
     st$del(version)
   }
-}
-
-
-github_release_create <- function(info, version, description=NULL,
-                                  filename=NULL,
-                                  yes=!interactive()) {
-  if (is.null(filename)) {
-    if (is.null(info$filename)) {
-      stop("filename must be given")
-    }
-    filename <- info$filename
-  }
-  if (!file.exists(filename)) {
-    stop(sprintf("File %s not found", filename))
-  }
-  if (is.null(info$filename)) {
-    info$filename <- basename(filename)
-  } else if (grepl("/", info$filename, fixed=TRUE)) {
-    stop("Expected path-less info$filename")
-  }
-  version <- add_v(version)
-
-  dat_repo <- github_api_repo(info)
-  dat_ref <- github_api_ref(info, dat_repo$default_branch)
-  msg_at <- sprintf("  at: %s (%s)",
-                    dat_ref$object$sha, dat_repo$default_branch)
-
-  msg_file <- sprintf("  file: %s (as %s) %.2f KB", filename, info$filename,
-                      file.size(filename) / 1024)
-
-  message("Will create release:")
-  message("  tag: ", version)
-  message(msg_at)
-  message(msg_file)
-  message("  description: ",
-          if (is.null(description)) "(no description)" else description)
-
-  if (!yes && !prompt_confirm()) {
-    stop("Not creating release")
-  }
-
-  ret <- github_api_release_create(info, version, description, target=NULL)
-  asset <- github_api_release_upload(info, version, filename, info$filename)
-
-  message("Created release!")
-  message("Please check the page to make sure everything is OK:\n", ret$html_url)
-  if (interactive() && !yes && prompt_confirm("Open in browser?")) {
-    utils::browseURL(ret$html_url)
-  }
-  ret$assets <- list(asset)
-  ret
 }
 
 ## This is the workhorse thing. We hit the release database (hopefully

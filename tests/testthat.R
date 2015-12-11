@@ -1,4 +1,4 @@
 library(testthat)
-library(dataverse)
+library(datastorr)
 
-test_check("dataverse")
+test_check("datastorr")

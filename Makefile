@@ -4,7 +4,7 @@ RSCRIPT = Rscript --no-init-file
 all: install
 
 test:
-	DATAVERSE_SKIP_DOWNLOADS=true make test_all
+	DATASTORR_SKIP_DOWNLOADS=true make test_all
 
 test_all:
 	${RSCRIPT} -e 'library(methods); devtools::test()'
@@ -20,7 +20,7 @@ build:
 	R CMD build .
 
 check:
-	DATAVERSE_SKIP_DOWNLOADS=true make check_all
+	DATASTORR_SKIP_DOWNLOADS=true make check_all
 
 check_all: build
 	_R_CHECK_CRAN_INCOMING_=FALSE R CMD check --as-cran --no-manual `ls -1tr ${PACKAGE}*gz | tail -n1`
