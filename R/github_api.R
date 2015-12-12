@@ -202,3 +202,41 @@ add_v <- function(x) {
 drop_null <- function(x) {
   x[!vapply(x, is.null, logical(1))]
 }
+
+## I think that GitHub does a programmatic thing here.  Or I could
+## talk to Karthik about how he set up the OAuth thing.  But I think
+## that github personal tokens are a nice way to go here in any case.
+setup_github_token <- function(path="~/.Renviron") {
+  if (file.exists(path)) {
+    dat <- readLines(path)
+    if (any(grepl("^\\s*GITHUB_TOKEN\\s*=[A-Za-z0-9]+\\s*$", dat))) {
+      message("Your GitHub token is set!")
+      return()
+    } else {
+      message("Did not find GitHub token in ", path)
+    }
+  }
+
+  message("Go to the page")
+  message("In the box fill in ")
+  message("Copy the token or click the 'copy' button")
+  if (!prompt_confirm()) {
+    stop("Cancelling", call.=FALSE)
+  }
+  browseURL("https:/github.com/profile/settings/tokens")
+
+  message("Paste your token in below and press return")
+  token <- readline("GITHUB_TOKEN = ")
+  prompt <- sprintf("Add token %s to '%s'?",
+                    sub("^(...).*(...)$", "\\1...\\2", token), path)
+  if (nchar(token) == 0L || !prompt_confirm(prompt)) {
+    stop("Cancelling", call.=FALSE)
+  }
+
+  environ <- c("# Added by datastorr:", paste0("GITHUB_TOKEN=", token))
+  if (file.exists(path)) {
+    environ <- c(readLines(path), environ)
+  }
+  writeLines(environ, path)
+  Sys.setenv(c(GITHUB_TOKEN=token))
+}

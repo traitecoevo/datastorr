@@ -27,5 +27,18 @@ check_all: build
 	@rm -f `ls -1tr ${PACKAGE}*gz | tail -n1`
 	@rm -rf ${PACKAGE}.Rcheck
 
+vignettes/datastorr.Rmd: vignettes/src/datastorr.R
+	${RSCRIPT} -e 'library(sowsear); sowsear("$<", output="$@")'
+vignettes: vignettes/datastorr.Rmd
+	${RSCRIPT} -e 'library(methods); devtools::build_vignettes()'
+
+staticdocs:
+	@mkdir -p inst/staticdocs
+	${RSCRIPT} -e "library(methods); staticdocs::build_site()"
+	rm -f vignettes/*.html
+	@rmdir inst/staticdocs
+website: staticdocs
+	./update_web.sh
+
 # No real targets!
 .PHONY: all test document install vignettes

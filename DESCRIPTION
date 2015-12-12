@@ -13,6 +13,9 @@ Imports:
     rappdirs,
     storr (>= 0.5.0)
 Suggests:
+    knitr,
+    rmarkdown,
     testthat,
     whisker
 RoxygenNote: 5.0.1
+VignetteBuilder: knitr

@@ -2,3 +2,5 @@
 .Rhistory
 .RData
 tests/testthat/mtcars.rds
+inst/doc
+inst/web
