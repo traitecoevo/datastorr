@@ -31,7 +31,7 @@ github_api_token <- function(required=FALSE) {
     if (required) {
       stop("GitHub token not found; please set GITHUB_TOKEN environment variable")
     } else {
-      NULL
+      return(NULL)
     }
   }
   httr::authenticate(token, "x-oauth-basic", "basic")

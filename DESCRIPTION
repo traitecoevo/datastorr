@@ -1,6 +1,6 @@
 Package: datastorr
 Title: Simple Data Versioning
-Version: 0.0.2
+Version: 0.0.3
 Author: Rich FitzJohn
 Maintainer: Rich FitzJohn <rich.fitzjohn@gmail.com>
 Description: Simple dataversioning using GitHub to store data.
