@@ -28,7 +28,8 @@
 ##' @export
 datastorr_auth <- function(required=FALSE, key=NULL, secret=NULL, cache=TRUE) {
   token <- github_token()
-  if (is.null(token)) {
+  ## Only go out to OAuth if required:
+  if (required && is.null(token)) {
     token <- datastorr_oauth(key, secret, cache)
   }
   if (required && is.null(token)) {
