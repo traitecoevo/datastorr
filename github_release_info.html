@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>github_release_info. datastorr 0.0.3</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script type="text/javascript"
+  src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="#">datastorr 0.0.3</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1>Github release information</h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre><div>github_release_info(repo, read, private&nbsp;=&nbsp;FALSE, filename&nbsp;=&nbsp;NULL, path&nbsp;=&nbsp;NULL)</div></pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>repo</dt>
+      <dd>Name of the repo in <code>username/repo</code> format.</dd>
+      <dt>read</dt>
+      <dd>Function to read the file.  See Details.</dd>
+      <dt>private</dt>
+      <dd>Is the repository private?  If so authentication
+will be required for all actions.  Setting this is optional but
+will result in better error messages because of the way GitHub
+returns not found/404 (rather than forbidden/403) errors when
+accessing private repositories without authorisation.</dd>
+      <dt>filename</dt>
+      <dd>Optional filename.  If omitted, all files in the
+release can be used.  If the filename contains a star ("*") it
+will be treated as a filename glob.  So you can do
+<code>filename="*.csv"</code> to match all csv files (dynamically
+computed on each release).</dd>
+      <dt>path</dt>
+      <dd>Optional path in which to store the data.  If omitted
+we use <code>rappdirs</code> to generate a reasonable path.</dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+
+      <p>Information to describe how to process github releases</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+
+      <p>The simplest case is where the data are stored in a single file
+attached to the release (this is different to the zip/tar.gz files
+that the web interface displays).  For example, a single csv file.
+In that case the filename argument can be safely ommited and we'll
+work it out based on the filename.</p>
+  
+    </div>
+      </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>github_release_info</li>
+    </ul>
+    <ul>
+      
+    </ul> -->
+      
+        
+  </div>
+</div>
+      
+      <footer>
+      <p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

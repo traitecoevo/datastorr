@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>autogenerate. datastorr 0.0.3</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script type="text/javascript"
+  src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="#">datastorr 0.0.3</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1>Autogenerate a datastorr interface</h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre><div>autogenerate(repo, read, filename&nbsp;=&nbsp;NULL, name&nbsp;=&nbsp;basename(repo), roxygen&nbsp;=&nbsp;TRUE)</div></pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>repo</dt>
+      <dd>Name of the repo on github (in username/repo format)</dd>
+      <dt>read</dt>
+      <dd><em>name</em> of a function to read the data.  Do not
+give the function itself!</dd>
+      <dt>filename</dt>
+      <dd>Name of the file to read.  If not given, then the
+single file in a release will be read (but you will need to
+provide a filename on upload).  If given, you cannot change the
+filename ever as all releases will be assumed to have the same
+filename.</dd>
+      <dt>name</dt>
+      <dd>Name of the dataset, used in generating the functions.
+If omitted the repo name is used.</dd>
+      <dt>roxygen</dt>
+      <dd>Include roxygen headers for the functions?</dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+
+      <p>Autogenerate an datastorr interface for a package.  The idea is to
+run this function and save the resulting code in a file in your
+package.  Then users will be able to download data and you will be
+able to relase data easily.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+
+      <p>In addition to running this, you will need to add <code>datastorr</code>
+to the <code>Imports:</code> section of your DESCRIPTION.  To upload
+files you will need to set your <code>GITHUB_TOKEN</code> environment
+variable.  These steps will be described more fully in a vignette.</p>
+  
+      <p>More complete instructions:</p>
+  
+      <p>Let <code>pkg</code> be <code>basename(repo</code>); the name of the package
+and of the GitHub repository.</p>
+  
+      <p>First, create a new R package, e.g.  <code>devtools::create(pkg)</code>.</p>
+  
+      <p>Then, copy the result of running <code>autogenerate</code> into a file
+in that package, e.g.</p>
+  
+      <p><pre>   writeLines(autogenerate(repo, read),
+             file.path(pkg, "datastorr.R"))
+  devtools::document(pkg)
+</pre></p>
+  
+      <p>Create a new git repository for this package, and add all the
+files in the package, and commit.</p>
+  
+      <p>On GitHub, create a repository for the package and push your code
+there.</p>
+  
+      <p>At this point you are now ready to start making releases by
+loading your package and running <code>pkg::<name>_release()</code>.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>writeLines(autogenerate(&quot;richfitz/datastorr.example&quot;,
+                        read=&quot;readRDS&quot;, name=&quot;mydata&quot;))
+</div>
+<div class='output'>##&#39; Download the example data set from richfitz/datastorr.example
+##&#39;  (\url{https://github.com/richfitz/datastorr.example/})
+##&#39; @title Download example data set
+##&#39;
+##&#39; @param version Version number.  The default will load the most
+##&#39;   recent version on your computer or the most recent version known
+##&#39;   to the package if you have never downloaded the data before.
+##&#39;   With \code{mydata_del}, specifying \code{version=NULL} will
+##&#39;   delete \emph{all} data sets.
+##&#39;
+##&#39; @param path Path to store the data at.  If not given,
+##&#39;   \code{datastorr} will use \code{rappdirs} to find the best place
+##&#39;   to put persistent application data on your system.  You can
+##&#39;   delete the persistent data at any time by running
+##&#39;   \code{mydata_del(NULL)} (or \code{mydata_del(NULL, path)} if you
+##&#39;   use a different path).
+##&#39;
+##&#39; @export
+mydata &lt;- function(version=NULL, path=NULL) {
+  datastorr::github_release_get(mydata_info(path), version)
+}
+
+##&#39; @export
+##&#39; @rdname mydata
+##&#39;
+##&#39; @param local Logical indicating if local or github versions should
+##&#39;   be polled.  With any luck, \code{local=FALSE} is a superset of
+##&#39;   \code{local=TRUE}.  For \code{mydata_version_current}, if
+##&#39;   \code{TRUE}, but there are no local versions, then we do check
+##&#39;   for the most recent github version.
+##&#39;
+mydata_versions &lt;- function(local=TRUE, path=NULL) {
+  datastorr::github_release_versions(mydata_info(path), local)
+}
+
+##&#39; @export
+##&#39; @rdname mydata
+mydata_version_current &lt;- function(local=TRUE, path=NULL) {
+  datastorr::github_release_version_current(mydata_info(path), local)
+}
+
+##&#39; @export
+##&#39; @rdname mydata
+mydata_del &lt;- function(version, path=NULL) {
+  datastorr::github_release_del(mydata_info(path), version)
+}
+
+## Core data:
+mydata_info &lt;- function(path) {
+  datastorr::github_release_info(&quot;richfitz/datastorr.example&quot;,
+                                 filename=NULL,
+                                 read=readRDS,
+                                 path=path)
+}
+
+##&#39; Maintainer-only function for releasing data.  This will look at
+##&#39; the version in the DESCRIPTION file and make a data release if the
+##&#39; GitHub repository contains the same version as we have locally.
+##&#39; Requires the \code{GITHUB_TOKEN} environment variable to be set.
+##&#39;
+##&#39; @title Make a data release.
+##&#39; @param ... Parameters passed through to \code{\link{github_release_create}}
+##&#39; @param path Path to the data (see \code{\link{mydata}}).
+##&#39; @export
+mydata_release &lt;- function(..., path=NULL) {
+  datastorr::github_release_create(mydata_info(path), ...)
+}
+</div>
+<div class='input'>writeLines(autogenerate(&quot;richfitz/datastorr.example&quot;,
+                        read=&quot;readRDS&quot;, name=&quot;mydata&quot;,
+                        roxygen=FALSE))
+</div>
+<div class='output'>mydata &lt;- function(version=NULL, path=NULL) {
+  datastorr::github_release_get(mydata_info(path), version)
+}
+
+mydata_versions &lt;- function(local=TRUE, path=NULL) {
+  datastorr::github_release_versions(mydata_info(path), local)
+}
+
+mydata_version_current &lt;- function(local=TRUE, path=NULL) {
+  datastorr::github_release_version_current(mydata_info(path), local)
+}
+
+mydata_del &lt;- function(version, path=NULL) {
+  datastorr::github_release_del(mydata_info(path), version)
+}
+
+## Core data:
+mydata_info &lt;- function(path) {
+  datastorr::github_release_info(&quot;richfitz/datastorr.example&quot;,
+                                 filename=NULL,
+                                 read=readRDS,
+                                 path=path)
+}
+
+mydata_release &lt;- function(..., path=NULL) {
+  datastorr::github_release_create(mydata_info(path), ...)
+}
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>autogenerate</li>
+    </ul>
+    <ul>
+      
+    </ul> -->
+      
+        
+  </div>
+</div>
+      
+      <footer>
+      <p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

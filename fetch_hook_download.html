@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>fetch_hook_download. datastorr 0.0.3</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script type="text/javascript"
+  src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="#">datastorr 0.0.3</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1>Hook for downloading files</h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre><div>fetch_hook_download(furl, fread)</div></pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>furl</dt>
+      <dd>Function to convert <code>key, namespace</code> into a URL.
+Takes scalar strings for key and namespace and returns a scalar
+string URL.  Depending on the application you may not need the
+namespace argument but your function must accept it even if it
+just ignores it.</dd>
+      <dt>fread</dt>
+      <dd>Function for converting <code>filename</code> into an R
+object.  <code>filename</code> will be a scalar character and be a
+filename that will exist on the system.  <code>fread</code> can return
+anything and may throw an error if the given file was not in a
+valid format.  Functions <code>read.csv</code>, <code>readRDS</code> can be
+used here as-is (though for the former consider
+<code>function(filename) read.csv(filename,
+stringsAsFactors=FALSE)</code>).</dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+
+      <p>Storr hook for downloading files as an external resource.  This
+might be useful for other, more general projects.  Just depend on
+this package (which drags in curl) and use this as the
+<code>fetch_hook</code> argument to <code><a href='http://www.inside-r.org/packages/cran/storr/docs/storr_external'>storr_external</a></code>.</p>
+  
+    </div>
+      </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>fetch_hook_download</li>
+    </ul>
+    <ul>
+      
+    </ul> -->
+      
+    <h2>See also</h2>
+    
+<code><a href='http://www.inside-r.org/packages/cran/storr/docs/storr_external'>storr_external</a></code>
+
+        
+  </div>
+</div>
+      
+      <footer>
+      <p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

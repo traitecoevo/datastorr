@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>github_release_create. datastorr 0.0.3</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script type="text/javascript"
+  src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="#">datastorr 0.0.3</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1>Create a github release</h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre><div>github_release_create(info, description&nbsp;=&nbsp;NULL, filename&nbsp;=&nbsp;NULL, target&nbsp;=&nbsp;NULL, ignore_dirty&nbsp;=&nbsp;FALSE, yes&nbsp;=&nbsp;!interactive())</div></pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>info</dt>
+      <dd>Result of running <code>github_release_info</code></dd>
+      <dt>description</dt>
+      <dd>Optional text description for the release.  If
+this is omitted then GitHub will display the commit message from
+the commit that the release points at.</dd>
+      <dt>filename</dt>
+      <dd>Filename to upload; optional if in <code>info</code>.
+If listed in <code>info</code>, <code>filename</code> can be different but
+the file will be renamed to <code>info$filename</code> on uploading.
+If given but not in <code>info</code>, the uploaded file will be
+<code>basename(filename)</code> (i.e., the directory will be
+stripped).</dd>
+      <dt>target</dt>
+      <dd>Target of the release.  This can be either the name
+of a branch (e.g., <code>master</code>, <code>origin/master</code>),
+existing tag <em>without a current release</em> or an SHA of a
+commit.  It is an error if the commit that this resolves to
+locally is not present on GitHub (e.g., if your branch is ahead
+of GitHub).  Push first!</dd>
+      <dt>ignore_dirty</dt>
+      <dd>Ignore non-checked in files?  By default, your
+repository is expected to be in a clean state, though files not
+known to git are ignored (as are files that are ignored by git).
+But you must have no uncommited changes or staged but uncommited
+files.</dd>
+      <dt>yes</dt>
+      <dd>Skip the confirmation prompt?  Only prompts if
+interactive.</dd>
+    </dl>
+    
+    <div class="Description">
+      <h2>Description</h2>
+
+      <p>Create a github release for your package.  This tries very hard to
+do the right thing but it's not always straightforward.  It first
+looks for your package.  Then it will work out what your last
+commit was (if <code>target</code> is NULL), the version of the package
+(from the DESCRIPTION).  It then creates a release on GitHub with
+the appropriate version number and uploads the file
+<code>filename</code> to the release.  The version number in the
+DESCRIPTION must be greater than the highest version number on
+GitHub.</p>
+  
+    </div>
+
+    <div class="Details">
+      <h2>Details</h2>
+
+      <p>This function requires a system git to be installed and on the
+path.  The version does not have to be particularly recent.</p>
+  
+      <p>This function also requires the <code>GITHUB_TOKEN</code> environment
+variable to be set, and for the token to be authorised to have
+write access to your repositories.</p>
+  
+    </div>
+      </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>github_release_create</li>
+    </ul>
+    <ul>
+      
+    </ul> -->
+      
+        
+  </div>
+</div>
+      
+      <footer>
+      <p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

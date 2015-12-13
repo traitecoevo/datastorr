@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>Index. datastorr 0.0.3</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="Rich FitzJohn">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script type="text/javascript"
+  src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="#">datastorr 0.0.3</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <div class="row">
+  <div class="span8">
+    <h1>datastorr</h1>
+
+<p>Simple data versioning using GitHub to store data.</p>
+
+<p>This package is designed to be used by other package authors, not directly by downstream end users.</p>
+
+<h2>End user interface</h2>
+
+<p>See <a href="https://github.com/richfitz/datastorr.example">here</a> for the aim from the point of view for an end user.</p>
+
+<p>They would install your package (which contains no data so is nice and
+light and can be uploaded to CRAN).</p>
+
+<pre><code class="r">devtools::install_github(&quot;richfitz/datastorr.example&quot;)
+</code></pre>
+
+<p>The user can see what versions they have locally</p>
+
+<pre><code class="r">datastorr.example::mydata_versions()
+</code></pre>
+
+<p>and can see what versions are present on github:</p>
+
+<pre><code class="r">datastorr.example::mydata_versions(local=FALSE) # remote
+</code></pre>
+
+<p>To download the most recent dataset:</p>
+
+<pre><code class="r">d &lt;- datastorr.example::mydata()
+</code></pre>
+
+<p>Subsequent calls (even across R sessions) are cached so that the mydata() function is fast enough you can use it in place of the data.</p>
+
+<p>To get a particular version:</p>
+
+<pre><code class="r">d &lt;- datastorr.example::mydata(&quot;0.0.1&quot;)
+</code></pre>
+
+<p>Downloads are cached across sessions using <code>rappdirs</code>.</p>
+
+<h2>Package developer process</h2>
+
+<p>The simplest way is to run the (hidden) function <code>datastorr:::autogenerate</code>, as</p>
+
+<pre><code class="r">datastorr:::autogenerate(repo=&quot;richfitz/datastorr.example&quot;, read=&quot;readRDS&quot;, name=&quot;mydata&quot;)
+</code></pre>
+
+<p>which will print to the screen a bunch of code to add do your package.  There will be a vignette explaining this more fully soon.  A file generated in this way can be seen  <a href="https://github.com/richfitz/datastorr.example/blob/master/R/package.R">here</a>.</p>
+
+<p>Once set up, new releases can be made by running, within your package directory:</p>
+
+<pre><code class="r">datastorr.example::mydata_release(&quot;description of release&quot;, &quot;path/to/file&quot;)
+</code></pre>
+
+<p>provided you have your <code>GITHUB_TOKEN</code> environment variable set appropriatey.  See the vignette for more details.</p>
+
+<h2>Installation</h2>
+
+<pre><code class="r">devtools::install_github(&quot;richfitz/storr@refactor&quot;)
+devtools::install_github(&quot;richfitz/datastorr&quot;)
+</code></pre>
+
+<h2>License</h2>
+
+<p>MIT + file LICENSE © <a href="https://github.com/">Rich FitzJohn</a>.</p>
+
+
+    <h2>Help topics</h2>
+
+    <h3></h3>
+    
+    
+    <ul class="index">
+        
+      <li>
+        <code><a href="autogenerate.html">autogenerate</a></code><br />Autogenerate a datastorr interface</li>
+            
+      <li>
+        <code><a href="datastorr_auth.html">datastorr_auth</a></code>(setup_github_token)<br />datastorr/GitHub authentication</li>
+            
+      <li>
+        <code><a href="fetch_hook_download.html">fetch_hook_download</a></code><br />Hook for downloading files</li>
+            
+      <li>
+        <code><a href="github_release_create.html">github_release_create</a></code><br />Create a github release</li>
+            
+      <li>
+        <code><a href="github_release_del.html">github_release_del</a></code><br />Delete version</li>
+            
+      <li>
+        <code><a href="github_release_get.html">github_release_get</a></code><br />Get data</li>
+            
+      <li>
+        <code><a href="github_release_info.html">github_release_info</a></code><br />Github release information</li>
+            
+      <li>
+        <code><a href="github_release_versions.html">github_release_versions</a></code>(github_release_version_current)<br />Get release versions</li>
+    
+    </ul>
+  </div>
+  
+  <div class="span3 offset1">
+    <h2>Vignettes</h2>
+    <ul>
+      <li><a href="vignettes/datastorr.html">datastorr</a></li>
+    </ul>
+        
+    <h2>Dependencies</h2>
+    <ul>
+      
+      <li><strong>Imports</strong>: httr, rappdirs, storr</li>
+      <li><strong>Suggests</strong>: knitr, rmarkdown, testthat, whisker</li>
+      
+    </ul>
+    <h2>Authors</h2>
+    <ul>
+    </ul>
+
+  </div>
+</div>
+      
+      <footer>
+      <p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>
