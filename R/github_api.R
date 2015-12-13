@@ -24,19 +24,6 @@ github_api_cache_clear <- function(info) {
   github_api_cache(info$private)$del(info$repo)
 }
 
-## Token for accessing private repos, and for creating releases.
-github_api_token <- function(required=FALSE) {
-  token <- Sys.getenv("GITHUB_TOKEN", "")
-  if (token == "") {
-    if (required) {
-      stop("GitHub token not found; please set GITHUB_TOKEN environment variable")
-    } else {
-      return(NULL)
-    }
-  }
-  httr::authenticate(token, "x-oauth-basic", "basic")
-}
-
 github_api_release_info <- function(info, version) {
   st <- github_api_cache(info$private)
   vv <- strip_v(version)
@@ -47,7 +34,7 @@ github_api_release_info <- function(info, version) {
   } else {
     url <- sprintf("https://api.github.com/repos/%s/releases/tags/%s",
                    info$repo, add_v(version))
-    r <- httr::GET(url, github_api_token(info$private))
+    r <- httr::GET(url, datastorr_auth(info$private))
     if (httr::status_code(r) >= 300L) {
       msg <- httr::content(r)$message
       if (is.null(msg)){
@@ -71,7 +58,7 @@ github_api_releases <- function(info) {
   url <- sprintf("https://api.github.com/repos/%s/releases", info$repo)
   dat <- httr::GET(url,
                    query=list(per_page=100),
-                   github_api_token(info$private))
+                   datastorr_auth(info$private))
   httr::stop_for_status(dat)
   httr::content(dat)
 }
@@ -83,7 +70,7 @@ github_api_release_delete <- function(info, version, yes=FALSE) {
   }
   x <- github_api_release_info(info, version)
 
-  r <- httr::DELETE(x$url, github_api_token(TRUE))
+  r <- httr::DELETE(x$url, datastorr_auth(TRUE))
   httr::stop_for_status(r)
   github_api_cache_clear(info)
   ## Need to also delete the tag:
@@ -94,7 +81,7 @@ github_api_release_delete <- function(info, version, yes=FALSE) {
 github_api_tag_delete <- function(info, tag_name) {
   url <- sprintf("https://api.github.com/repos/%s/git/refs/tags/%s",
                  info$repo, tag_name)
-  r <- httr::DELETE(url, github_api_token(TRUE))
+  r <- httr::DELETE(url, datastorr_auth(TRUE))
   httr::stop_for_status(r)
   invisible(httr::content(r))
 }
@@ -106,7 +93,7 @@ github_api_release_create <- function(info, version,
                target_commitish=target)
   url <- sprintf("https://api.github.com/repos/%s/releases", info$repo)
   r <- httr::POST(url, body=drop_null(data), encode="json",
-                  github_api_token(TRUE))
+                  datastorr_auth(TRUE))
   github_api_catch_error(r, "Failed to create release")
   github_api_cache_clear(info)
   invisible(httr::content(r))
@@ -118,7 +105,7 @@ github_api_release_upload <- function(info, version, filename, name) {
                   query=list(name=name),
                   body=httr::upload_file(filename),
                   httr::progress("up"),
-                  github_api_token(TRUE))
+                  datastorr_auth(TRUE))
   cat("\n") # clean up after httr's progress bar :(
   httr::stop_for_status(r)
   github_api_cache_clear(info)
@@ -132,7 +119,7 @@ github_api_release_update <- function(info, version,
                body=description,
                target_commitish=target)
   r <- httr::PATCH(x$url, body=drop_null(data),
-                   github_api_token(TRUE), encode="json")
+                   datastorr_auth(TRUE), encode="json")
   httr::stop_for_status(r)
   github_api_cache_clear(info)
   invisible(httr::content(r))
@@ -140,7 +127,7 @@ github_api_release_update <- function(info, version,
 
 github_api_repo <- function(info) {
   url <- sprintf("https://api.github.com/repos/%s", info$repo)
-  r <- httr::GET(url, github_api_token(info$private))
+  r <- httr::GET(url, datastorr_auth(info$private))
   httr::stop_for_status(r)
   httr::content(r)
 }
@@ -148,7 +135,7 @@ github_api_ref <- function(info, ref, type="heads") {
   type <- match.arg(type, c("heads", "tags"))
   url <- sprintf("https://api.github.com/repos/%s/git/refs/%s/%s",
                  info$repo, type, ref)
-  r <- httr::GET(url, github_api_token(info$private))
+  r <- httr::GET(url, datastorr_auth(info$private))
   httr::stop_for_status(r)
   httr::content(r)
 }
@@ -156,7 +143,7 @@ github_api_ref <- function(info, ref, type="heads") {
 github_api_commit <- function(info, sha) {
   url <- sprintf("https://api.github.com/repos/%s/git/commits/%s",
                  info$repo, sha)
-  r <- httr::GET(url, github_api_token(info$private))
+  r <- httr::GET(url, datastorr_auth(info$private))
   github_api_catch_error(r)
   httr::content(r)
 }
@@ -201,42 +188,4 @@ add_v <- function(x) {
 
 drop_null <- function(x) {
   x[!vapply(x, is.null, logical(1))]
-}
-
-## I think that GitHub does a programmatic thing here.  Or I could
-## talk to Karthik about how he set up the OAuth thing.  But I think
-## that github personal tokens are a nice way to go here in any case.
-setup_github_token <- function(path="~/.Renviron") {
-  if (file.exists(path)) {
-    dat <- readLines(path)
-    if (any(grepl("^\\s*GITHUB_TOKEN\\s*=[A-Za-z0-9]+\\s*$", dat))) {
-      message("Your GitHub token is set!")
-      return()
-    } else {
-      message("Did not find GitHub token in ", path)
-    }
-  }
-
-  message("Go to the page")
-  message("In the box fill in ")
-  message("Copy the token or click the 'copy' button")
-  if (!prompt_confirm()) {
-    stop("Cancelling", call.=FALSE)
-  }
-  browseURL("https:/github.com/profile/settings/tokens")
-
-  message("Paste your token in below and press return")
-  token <- readline("GITHUB_TOKEN = ")
-  prompt <- sprintf("Add token %s to '%s'?",
-                    sub("^(...).*(...)$", "\\1...\\2", token), path)
-  if (nchar(token) == 0L || !prompt_confirm(prompt)) {
-    stop("Cancelling", call.=FALSE)
-  }
-
-  environ <- c("# Added by datastorr:", paste0("GITHUB_TOKEN=", token))
-  if (file.exists(path)) {
-    environ <- c(readLines(path), environ)
-  }
-  writeLines(environ, path)
-  Sys.setenv(c(GITHUB_TOKEN=token))
 }

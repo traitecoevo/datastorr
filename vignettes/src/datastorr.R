@@ -63,7 +63,7 @@
 ##
 ## * Just right: A data set of medium size (say, under 100 MB), that
 ##   is under moderate levels of change (either stabilising or a
-##   "living database" that is continually being updated.
+##   "living database" that is continually being updated).
 
 ## ## How it works
 
@@ -90,7 +90,7 @@
 ## the cloud until it is needed.
 
 ## The releases will be numbered.  We recommend [semantic
-## versioning](https://semver.org) mostly because it signals some
+## versioning](http://semver.org) mostly because it signals some
 ## intent about changes to the data (see below).
 
 ## We will make the simplifying assumption that your data set will be
@@ -215,11 +215,27 @@
 
 ## Because GitHub offers private repositories, this gives some
 ## primitive, but potentailly useful, access control.  Because
-## datastorr uses GitHub tokens to authenticate, GitHub knows if the
-## user has access to private repositories (therefore for this to
-## work, all users will have to set up their github tokens, e.g., with
-## `setup_github_token()`).
+## datastorr uses GitHub's authentication, GitHub knows if the user
+## has access to private repositories.  Therefore for this to work you
+## will need to authenticate datastorr to work with GitHub.
+
+## The simplest way to do this is to let datastorr prompt you when
+## access is required.  Or run:
 ##
+## ```r
+## datastorr::datastorr_auth()
+## ```
+##
+## to force the authentication process to run (no error and no output
+## indicates success).  To force using personal access tokens rather
+## than OAuth, run:
+##
+## ```r
+## setup_github_token()
+## ```
+##
+## which will walk you through the steps of setting a token up.
+
 ## If you use a personal private repository, then you invite other
 ## users to "collaborate" on the repository.  Note that this gives the
 ## users push access to the repository; the access control is very
