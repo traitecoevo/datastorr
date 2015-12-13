@@ -35,5 +35,36 @@ In addition to running this, you will need to add \code{datastorr}
 to the \code{Imports:} section of your DESCRIPTION.  To upload
 files you will need to set your \code{GITHUB_TOKEN} environment
 variable.  These steps will be described more fully in a vignette.
+
+More complete instructions:
+
+Let \code{pkg} be \code{basename(repo}); the name of the package
+and of the GitHub repository.
+
+First, create a new R package, e.g.  \code{devtools::create(pkg)}.
+
+Then, copy the result of running \code{autogenerate} into a file
+in that package, e.g.
+
+\preformatted{   writeLines(autogenerate(repo, read),
+             file.path(pkg, "datastorr.R"))
+  devtools::document(pkg)
+}
+
+Create a new git repository for this package, and add all the
+files in the package, and commit.
+
+On GitHub, create a repository for the package and push your code
+there.
+
+At this point you are now ready to start making releases by
+loading your package and running \code{pkg::<name>_release()}.
+}
+\examples{
+writeLines(autogenerate("richfitz/datastorr.example",
+                        read="readRDS", name="mydata"))
+writeLines(autogenerate("richfitz/datastorr.example",
+                        read="readRDS", name="mydata",
+                        roxygen=FALSE)
 }
 
