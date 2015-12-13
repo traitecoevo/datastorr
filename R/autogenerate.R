@@ -56,7 +56,7 @@
 ##'                         read="readRDS", name="mydata"))
 ##' writeLines(autogenerate("richfitz/datastorr.example",
 ##'                         read="readRDS", name="mydata",
-##'                         roxygen=FALSE)
+##'                         roxygen=FALSE))
 autogenerate <- function(repo, read, filename=NULL, name=basename(repo),
                          roxygen=TRUE) {
   loadNamespace("whisker")

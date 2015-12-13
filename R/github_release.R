@@ -86,7 +86,7 @@ github_release_create <- function(info, description=NULL,
   target <- dat$sha_local
 
   msg_file <- sprintf("  file: %s (as %s) %.2f KB", filename, info$filename,
-                      file.size(filename) / 1024)
+                      file.info(filename)$size / 1024)
 
   message("Will create release:")
   message("  tag: ", version)

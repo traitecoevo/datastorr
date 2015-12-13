@@ -5,3 +5,4 @@
 ^.travis.yml$
 ^appveyor.yml$
 ^tests/testthat/mtcars\.rds$
+^update_web\.sh$
