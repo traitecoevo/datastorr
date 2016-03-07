@@ -12,6 +12,7 @@ skip_unless_internet <- function() {
   skip("No internet :(")
 }
 skip_if_no_github_token <- function() {
+  skip_if_no_downloads()
   if (inherits(github_token(), "request")) {
     return()
   }

@@ -1,0 +1,5 @@
+{
+    "repo": "richfitz/datastorr.example",
+    "filename": null,
+    "read": "base::readRDS"
+}

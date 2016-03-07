@@ -10,8 +10,9 @@ URL: https://github.com/richfitz/datastorr
 BugReports: https://github.com/richfitz/datastorr/issues
 Imports:
     httr,
+    jsonlite,
     rappdirs,
-    storr (>= 0.5.0)
+    storr (>= 1.0.0)
 Suggests:
     knitr,
     rmarkdown,

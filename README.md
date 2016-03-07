@@ -1,8 +1,39 @@
 # datastorr
 
-Simple data versioning using GitHub to store data.
+Simple data retrieval and versioning using GitHub to store data.
 
-This package is designed to be used by other package authors, not directly by downstream end users.
+## The problem
+
+There are a number of related problems that `datastorr` tries to address.  Mostly these fall into the category of:
+
+* You are working on an analysis that requires data that don't easily fit in GitHub
+* You need to distribute datafiles to people to use, but the data changes periodically
+
+The obvious solution to this is "put the files up online somewhere and download them when you need them".  This is what `datastorr` does.  But in doing so it tries to solve the auxillary problems:
+
+* Caching the downloads, including across R sessions, to make things faster and to work offline
+* Deal consistently with translating the file stored online into a loaded data object
+* Keep track of which versions are downloaded and available remotely
+* Allows you to access multiple versions of the data at once (helpful if working out why results have changed)
+
+## How datastorr helps
+
+This package can be used in two ways:
+
+1. Use data stored elsewhere in R efficiently (e.g. work with csv files that are too large to comfortably fit in git).
+2. Create another lightweight package designed to allow easy access to your data.
+
+For both of these use-cases, `datastorr` will store your data using _GitHub releases_ which do not clog up your repository but allow up to 2GB files to be stored (future versions may support things like figshare).
+
+`datastorr` is concerned about a simple versioning scheme for your data.  If you do not imagine the version changing that should not matter.  But if you work with data that changes (and everyone does eventually) this approach should make it easy to update files.
+
+From the point of view of a user, using your data could be as simple as:
+
+```r
+d <- datastorr::datastorr("richfitz/datastorr.example")
+```
+
+(see below for details, how this works, and what it is doing).
 
 ## End user interface
 
@@ -65,7 +96,6 @@ provided you have your `GITHUB_TOKEN` environment variable set appropriatey.  Se
 ## Installation
 
 ```r
-devtools::install_github("richfitz/storr@refactor")
 devtools::install_github("richfitz/datastorr")
 ```
 

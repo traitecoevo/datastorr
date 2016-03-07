@@ -12,7 +12,7 @@ test_that("basic", {
 
   skip_if_no_downloads()
   path <- tempfile()
-  download_file("https://raw.githubusercontent.com/richfitz/datastorr.example/master/R/package.R", path)
+  download_file("https://raw.githubusercontent.com/richfitz/datastorr.example/master/R/package.R", dest=path)
   cmp <- readLines(path)
   expect_equal(res, cmp)
 })

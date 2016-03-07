@@ -54,7 +54,6 @@ test_that("datastorr.example", {
   ## So, basically nothing here will work without the token, and as
   ## it's my repository, that's not ideal.  Happy for other solutions
   ## here.
-  skip_if_no_downloads()
   skip_if_no_github_token()
   path <- tempfile("datastorr_")
   url <- "https://github.com/richfitz/datastorr.example.git"
@@ -72,8 +71,8 @@ test_that("datastorr.example", {
   info <- mydata_info(tempfile("datastorr_"))
 
   d <- read.csv(file.path(owd, "example.csv"), stringsAsFactors=FALSE)
-  dd <- lapply(d$dataset, get, as.environment("package:datasets"))
-  names(dd) <- d$dataset
+  dd_contents <- lapply(d$dataset, get, as.environment("package:datasets"))
+  names(dd_contents) <- d$dataset
 
   ## Temporary place to stick data:
   tmp <- tempfile("datastorr_")
@@ -93,9 +92,7 @@ test_that("datastorr.example", {
   f <- function(i) {
     sha <- d$target[[i]]
     system2("git", c("checkout", sha))
-    path_data <- file.path(tmp, paste0(d$dataset[[i]], ".rds"))
-    saveRDS(dd[[i]], path_data)
-    github_release_create(info, d$description[[i]], path_data, sha, yes=TRUE)
+    github_release_create(info, d$description[[i]], dd[[i]], sha, yes=TRUE)
   }
 
   for (i in seq_len(nrow(d))) {
@@ -146,6 +143,6 @@ test_that("datastorr.example", {
 
   for (i in j) {
     data_i <- mydata(vv[[i]], info$path)
-    expect_identical(data_i, readRDS(dd[[i]]))
+    expect_identical(data_i, dd_contents[[i]])
   }
 })

@@ -43,7 +43,6 @@ github_release_info <- function(repo, read,
             class="github_release_info")
 }
 
-##' @importFrom rappdirs user_data_dir
 github_release_path <- function(repo) {
   rappdirs::user_data_dir(file.path("datastorr", repo))
 }
