@@ -141,6 +141,7 @@ fetch_hook_github_release <- function(info) {
     } else {
       i <- match(info$filename, files)
       if (is.na(i)) {
+        # TODO: this does not report found filename
         stop(sprintf("File %s not found in release (did find: )",
                      info$filename, paste(files, collapse=", ")))
       }

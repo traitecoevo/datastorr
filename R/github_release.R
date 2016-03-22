@@ -68,6 +68,16 @@ github_release_create <- function(info, description=NULL,
   }
 
   dat <- github_release_package_info(info, target)
+
+  github_release_create1(info, dat, filename, version, description,
+                         ignore_dirty, yes)
+}
+
+github_release_create_ <- function(info, dat, filename, version, description,
+                                   ignore_dirty, yes) {
+  if (!file.exists(filename)) {
+    stop("Filename does not exist: ", filename)
+  }
   github_release_preflight(dat, ignore_dirty)
 
   ## This is the complicated bit of the message; enough context to
@@ -85,7 +95,10 @@ github_release_create <- function(info, description=NULL,
   version <- add_v(dat$version_local)
   target <- dat$sha_local
 
-  msg_file <- sprintf("  file: %s (as %s) %.2f KB", filename, info$filename,
+  ftarget <- if (is.null(info$filename)) basename(filename) else info$filename
+
+  ## TODO: will this fail in the case where info$filename is null?
+  msg_file <- sprintf("  file: %s (as %s) %.2f KB", filename, ftarget,
                       file.info(filename)$size / 1024)
 
   message("Will create release:")
@@ -101,27 +114,33 @@ github_release_create <- function(info, description=NULL,
 
   ret <- github_api_release_create(info, version, description, target)
   asset <- github_api_release_upload(info, version, filename, info$filename)
+  ret$assets <- list(asset)
 
   message("Created release!")
-  message("Please check the page to make sure everything is OK:\n", ret$html_url)
+  message("Please check the page to make sure everything is OK:\n",
+          ret$html_url)
   if (interactive() && !yes && prompt_confirm("Open in browser?")) {
     utils::browseURL(ret$html_url)
   }
-  ret$assets <- list(asset)
-  ret
+  invisible(ret)
 }
 
-github_release_package_info <- function(info, sha_local=NULL) {
+github_release_package_info <- function(info, sha_local=NULL, version=NULL) {
+  ## This can be done with either system commands or with git2r.  Not
+  ## entirely sure which is the least bad way of doing it.
   git <- Sys.which("git")
   if (git == "") {
     stop("Need a system git to create releases: http://git-scm.com")
   }
-  ## This can be done with either system commands or with git2r.  Not
-  ## entirely sure which is the least bad way of doing it.
-  git_root <- system2(git, c("rev-parse", "--show-toplevel"), stdout=TRUE)
-  pkg_root <- find_package_root(git_root)
-  dcf <- as.list(read.dcf(file.path(pkg_root, "DESCRIPTION"))[1,])
-  version_local <- dcf$Version
+
+  if (is.null(version)) {
+    git_root <- system2(git, c("rev-parse", "--show-toplevel"), stdout=TRUE)
+    pkg_root <- find_package_root(git_root)
+    dcf <- as.list(read.dcf(file.path(pkg_root, "DESCRIPTION"))[1,])
+    version_local <- dcf$Version
+  } else {
+    version_local <- version
+  }
   version_remote <- github_release_version_current(info, FALSE)
 
   if (is.null(sha_local)) {

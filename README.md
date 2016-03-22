@@ -2,6 +2,8 @@
 
 Simple data retrieval and versioning using GitHub to store data.
 
+**Warning: the functions in here are subject to rationalisation over the next little bit, especially as I harmonise the interfaces**
+
 ## The problem
 
 There are a number of related problems that `datastorr` tries to address.  Mostly these fall into the category of:

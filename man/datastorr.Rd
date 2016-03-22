@@ -2,7 +2,7 @@
 % Please edit documentation in R/simple.R
 \name{datastorr}
 \alias{datastorr}
-\title{Create a datastorr}
+\title{Fetch data from a datastorr repository}
 \usage{
 datastorr(repo, path = NULL, metadata = "datastorr.json",
   branch = "master", private = FALSE, refetch = FALSE, version = NULL,

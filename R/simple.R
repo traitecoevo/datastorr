@@ -19,7 +19,7 @@
 ##' making a package and will likely work pretty well as part of an
 ##' analysis pipeline where your dependencies are well documented
 ##' anyway.
-##' @title Create a datastorr
+##' @title Fetch data from a datastorr repository
 ##' @param repo Either a github repo in the form
 ##'   \code{<username>/<repo>} (e.g.,
 ##'   \code{"richfitz/datastorr.example"} or the path to a json file
@@ -53,33 +53,7 @@ datastorr <- function(repo, path=NULL,
                       metadata="datastorr.json", branch="master",
                       private=FALSE, refetch=FALSE,
                       version=NULL, extended=FALSE) {
-  if (file.exists(repo)) {
-    info <- read_metadata(repo, NULL, path)
-    if (private && is.null(info$private)) {
-      info$private <- TRUE
-    }
-  } else {
-    if (is.null(path)) {
-      path <- github_release_path(repo)
-    }
-    ## TODO: in the case of non-NULL path, consider stuffing the
-    ## metadata into the storr above (so that things are self
-    ## contained) but into a different namespace (e.g. metadata).
-    ##
-    ## TODO: add support for a options() path for storing file at.
-    cache <- storr::storr_rds(path, default_namespace="datastorr")
-    if (cache$exists("info") && !refetch) {
-      info <- cache$get("info")
-    } else {
-      url <- sprintf("https://raw.githubusercontent.com/%s/%s/%s",
-                     repo, branch, metadata)
-      tmp <- download_file(url, datastorr_auth(private))
-      on.exit(file.remove(tmp))
-      info <- read_metadata(tmp, repo, path)
-      cache$set("info", info)
-    }
-  }
-
+  info <- datastorr_info(repo, path, metadata, branch, private, refetch)
   obj <- .R6_datastorr$new(info)
   if (extended) {
     if (!is.null(version)) {
@@ -114,6 +88,90 @@ datastorr <- function(repo, path=NULL,
     del=function(version) {
       github_release_del(self$info, version)
     }))
+
+##' Create a relase for a simple datastorr (i.e., non-package based).
+##'
+##' @title Release data to a datastorr repository
+##'
+##' @inheritParams datastorr
+##'
+##' @param version A version number for the new version.  Should be of
+##'   the form x.y.z, and may or may not contain a leading "v" (one
+##'   will be added in any case).
+##'
+##' @param description Optional text description for the release.  If
+##'   this is omitted then GitHub will display the commit message from
+##'   the commit that the release points at.
+##'
+##' @param filename Filename to upload; optional if in
+##'   \code{datastorr.json}.  If listed, \code{filename} can be
+##'   different but the file will be renamed on uploading.  If given
+##'   but not in \code{info}, the uploaded file will be
+##'   \code{basename(filename)} (i.e., the directory will be
+##'   stripped).
+##'
+##' @param target The SHA or tag to attach the release to.  By
+##'   default, will use the current HEAD, which is typically what you
+##'   want to do.
+##'
+##' @param ignore_dirty Ignore non-checked in files?  By default, your
+##'   repository is expected to be in a clean state, though files not
+##'   known to git are ignored (as are files that are ignored by git).
+##'   But you must have no uncommited changes or staged but uncommited
+##'   files.
+##'
+##' @param yes Skip the confirmation prompt?  Only prompts if
+##'   interactive.
+##' @export
+release <- function(repo, version, description=NULL, filename=NULL, path=NULL,
+                    metadata="datastorr.json", branch="master",
+                    private=FALSE, refetch=FALSE,
+                    target=NULL, ignore_dirty=FALSE,
+                    yes=!interactive()) {
+  info <- datastorr_info(repo, path, metadata, branch, private, refetch)
+  if (is.null(filename)) {
+    filename <- info$filename
+    if (is.null(filename)) {
+      stop("filename must be given (as is not included in json)")
+    }
+  }
+
+  dat <- github_release_package_info(info, target, version)
+  github_release_create_(info, dat, filename, version, description,
+                         ignore_dirty, yes)
+}
+
+datastorr_info <- function(repo, path=NULL, metadata="datastorr.json",
+                           branch="master", private=FALSE, refetch=FALSE) {
+  if (file.exists(repo)) {
+    info <- read_metadata(repo, NULL, path)
+    if (private && is.null(info$private)) {
+      info$private <- TRUE
+    }
+  } else {
+    if (is.null(path)) {
+      check_repo(repo)
+      path <- github_release_path(repo)
+    }
+    ## TODO: in the case of non-NULL path, consider stuffing the
+    ## metadata into the storr above (so that things are self
+    ## contained) but into a different namespace (e.g. metadata).
+    ##
+    ## TODO: add support for a options() path for storing file at.
+    cache <- storr::storr_rds(path, default_namespace="datastorr")
+    if (cache$exists("info") && !refetch) {
+      info <- cache$get("info")
+    } else {
+      url <- sprintf("https://raw.githubusercontent.com/%s/%s/%s",
+                     repo, branch, metadata)
+      tmp <- download_file(url, datastorr_auth(private))
+      on.exit(file.remove(tmp))
+      info <- read_metadata(tmp, repo, path)
+      cache$set("info", info)
+    }
+  }
+  info
+}
 
 read_metadata <- function(filename, repo=NULL, path=NULL) {
   req <- c("read")
@@ -173,4 +231,14 @@ read_metadata <- function(filename, repo=NULL, path=NULL) {
 
   github_release_info(info$repo, read, info$private,
                       info$filename, path)
+}
+
+check_repo <- function(repo) {
+  if (length(repo) != 1L) {
+    stop("Expected a scalar for 'repo'")
+  }
+  x <- strsplit(repo, "/", fixed=TRUE)[[1L]]
+  if (length(x) != 2L) {
+    stop("Expected a string of form <username>/<repo> for 'repo'")
+  }
 }
