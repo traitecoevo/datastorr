@@ -43,8 +43,11 @@ around small-scale data versioning and distribution:
   files, binary data, phylogenic trees, or a collection of all of
   these), so long as you have a way of reading the data into R.
 
-The package is designed so that you can do all of that in 22 lines
-of code (which you can generate with one function call).
+The package is designed so be simple to use so that all that can be
+done in a couple of lines of code, or (for more involved cases)
+with a package that can be generated automatically.
+
+## Background
 
 Data comes in all shapes and sizes, and a one-size fits all
 solution will not fit everything.
@@ -65,16 +68,20 @@ solution will not fit everything.
   is under moderate levels of change (either stabilising or a
   "living database" that is continually being updated).
 
-## How it works
+Getting data into R is typically done with a [data
+package](https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Data-in-packages).
+This works well for small data, but CRAN will [not generally
+allow](https://cran.r-project.org/web/packages/policies.html)
+distribution of "large" data sets.  The `data()` loading mechanism
+of R always seemed a bit of a weird historical quirk in any case;
+it operates in some additional namespace (`package:datasets`),
+works by modifying an environment as a side-effect.  Plus if you
+need to compare two versions of the data you have to do some
+gynmastics to install two different versions of a package (or
+create a package with all the different versions of the data in
+it).
 
-We create an extremely small R package in a git repository, and
-publish that git repository to GitHub.  The git repository contains
-only a bit of metadata that uses `datastorr` to download and
-retrieve your data (see below).  It can however contain whatever
-code you would like for working with your data set.  In our own
-use, the repository (but not the package) contains code for
-_building_ the data set (see
-[taxonlookup](https://github.com/traitecoevo/taxonlookup)).
+## How `datastorr` works
 
 GitHub has a "releases" feature for allowing (potentially large)
 file uploads.  These files can be any format.  GitHub releases are
@@ -87,34 +94,57 @@ files, on lengthy clone times, and on distributing and installing
 your package.  This could be an issue if you had 100 versions of a
 10 MB dataset; that could be 1GB of data to clone or install.  But
 storing your data against GitHub releases will leave the data in
-the cloud until it is needed.
+the cloud until it is needed.  And the files can be quite large;
+[up to
+2GB](https://help.github.com/articles/distributing-large-binaries).
 
 The releases will be numbered.  We recommend [semantic
 versioning](http://semver.org) mostly because it signals some
-intent about changes to the data (see below).
+intent about changes to the data (see below).  If the data is not
+going to change, that's not a problem - the version can just be
+`v1.0.0` forever (chances are it will change though!).
 
 We will make the simplifying assumption that your data set will be
-stored in a single file.  In practice this is not a limitation
-because that file could be a zip archive.  The file can be in any
-format; csv, rds (R's internal format), a SQLite database.  You,
-however, need to provide a function that will read the data and
-convert it into an R object.  So for a csv file you'd provide a
-function that would be `read.csv` perhaps with a few arguments set
-(e.g., `stringsAsFactors=FALSE`).  For an rds file you could just
-use `readRDS`.  And for a zip file you would need a more
-complicated function (see the worked example).
+stored in a single file.  In practice this is not a large
+limitation because that file could be a zip archive.  The file can
+be in any format; csv, rds (R's internal format), a SQLite
+database.  You, however, need to specify or provide a function that
+will read the data and convert it into an R object.  This is most
+easily done with `rds` files (R's serialisation format -- though
+note they say that it is not a great long-term archival format [see
+`?serialize`]).
 
-Once your git repsitory is published and your data have been
-released, downloading it becomes a function within your package.  A
-user would run something like:
+To orchestrate getting the data from github to R we need to add a
+little metadata about what the file will be called and how it
+should be loaded into R.  This can be done most simply with a small
+[json](https://en.wikipedia.org/wiki/JSON) file at the root of the
+repository containing information like:
 
-```{r,eval=FALSE}
-d <- mypackage::mydata()
+```json
+{
+    "filename": "myfile.rds",
+    "read": "base::readRDS"
+}
 ```
 
-to fetch or load the data.  This function is designed to be *fast*.
-It uses [`storr`](https://github.com/richfitz/storr) behind the
-scenes and looks in various places for the data:
+Note that the function used here must take a filename as an
+argument and return an R object.  So functions like `read.csv`,
+`read.table` and functions from the
+[`rio`](https://github.com/leeper/rio) package may be good here.
+
+Once your git repository is set up, the metadata file added to it,
+and a release with data has been created, it can be downloaded
+like:
+``` {r }
+d <- datastorr::datastorr("richfitz/data")
+```
+
+though, with your username/repo pair instead of `richfitz/data`.
+
+This function is designed to be *fast* for users, and so suitable
+for using in scripts.  It uses
+[`storr`](https://github.com/richfitz/storr) behind the scenes and
+looks in various places for the data:
 
 1. In memory; if it has been loaded within this session it is
 already in memory.  Takes on the order of microseconds.
@@ -131,12 +161,65 @@ dataset.
 In addition, users can download specific versions of a dataset.
 This might be to synchronise data versions across different people
 in a project, to lock a project onto a specific version, etc:
+``` {r }
+d_old <- datastorr::datastorr("richfitz/data", version="1.0.0")
+```
+
+(The same cascading lookup as above is used.)
+
+Versions can be listed; those stored locally:
+``` {r }
+datastorr::datastorr_versions("richfitz/data")
+```
+
+or available remotely:
+``` {r }
+datastorr::datastorr_versions("richfitz/data", local=FALSE)
+```
+
+The versions that have been downloaded (here `d` and `d_old`) are
+just normal R objects Unlike use with `data()` there's no ambiguity
+about where they are stored, and modifying one acts like any other
+object.
+
+Similarly, because these are ordinary R objects you can do things
+like use [`daff`](https://github.com/edwindj/daff) to compare them
+
+```r
+p <- daff::diff_data(d_old, d)
+daff::render_diff(p)
+```
+
+## The package interface
+
+Alternatively we can create a very small R package that exists at
+the repo that we store releases against.  This package can be
+autogenerated, and is a useful approach when there is a significant
+amount of work needed in processing the data, to simplify
+installation of dependencies used in reading or displaying the
+data, or to work with the data once it has been downloaded.In our
+own use, the repository (but not the package) contains code for
+_building_ the data set (see
+[taxonlookup](https://github.com/traitecoevo/taxonlookup)).  The
+package approach will be described more fully later in the
+document.
+
+Once your git repsitory is published and your data have been
+released, downloading it becomes a function within your package.  A
+user would run something like:
+
+```{r,eval=FALSE}
+d <- mypackage::mydata()
+```
+
+to fetch or load the data.
+
 
 ```{r,eval=FALSE}
 d <- mypackage::mydata("v1.0.0")
 ```
 
-The same cascading lookup as above works.
+
 
 This approach extends to holding multiple versions of the data on a
 single computer (or in a single R session).  This might be useful
@@ -149,6 +232,9 @@ d2 <- mypackage::mydata("v1.1.0")
 ```
 
 ## Worked example
+
+
+
 
 
 First, you will need a package.  Creating packages is not that
