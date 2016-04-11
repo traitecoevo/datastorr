@@ -22,7 +22,7 @@
 ##' @title Fetch data from a datastorr repository
 ##' @param repo Either a github repo in the form
 ##'   \code{<username>/<repo>} (e.g.,
-##'   \code{"richfitz/datastorr.example"} or the path to a json file
+##'   \code{"richfitz/data"} or the path to a json file
 ##'   on your filesystem.
 ##' @param path The path to store the data at.  Using \code{NULL} will
 ##' @param metadata The name of the metadata file within the repo (if
@@ -45,7 +45,7 @@
 ##' @examples
 ##' \dontrun{
 ##' path <- tempfile()
-##' dat <- datastorr("richfitz/datastorr.example", tempfile())
+##' dat <- datastorr("richfitz/data", path, extended=TRUE)
 ##' dat$list()
 ##' dat()
 ##' }
@@ -63,6 +63,14 @@ datastorr <- function(repo, path=NULL,
   } else {
     obj$get(version)
   }
+}
+
+##' @param ... Arguments passed through to \code{datastorr}
+##' @param local Return information on local versions?
+##' @export
+##' @rdname datastorr
+datastorr_versions <- function(..., local=TRUE) {
+  datastorr(..., extended=TRUE)$versions(local)
 }
 
 .R6_datastorr <- R6::R6Class(

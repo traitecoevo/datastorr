@@ -12,7 +12,7 @@ release(repo, version, description = NULL, filename = NULL, path = NULL,
 \arguments{
 \item{repo}{Either a github repo in the form
 \code{<username>/<repo>} (e.g.,
-\code{"richfitz/datastorr.example"} or the path to a json file
+\code{"richfitz/data"} or the path to a json file
 on your filesystem.}
 
 \item{version}{A version number for the new version.  Should be of

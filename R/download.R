@@ -1,6 +1,9 @@
 ## A file downloader that can (a) handle https and (b) actually fail
 ## when the download fails.  Not sure why that combination is so hard,
 ## but here it is:
+##
+## TODO: rewrite to use curl only, possibly with gabor's progress bar
+## package.
 download_file <- function(url, ..., dest=tempfile(), overwrite=FALSE) {
   content <- httr::GET(url,
                        httr::write_disk(dest, overwrite),

@@ -2,16 +2,19 @@
 % Please edit documentation in R/simple.R
 \name{datastorr}
 \alias{datastorr}
+\alias{datastorr_versions}
 \title{Fetch data from a datastorr repository}
 \usage{
 datastorr(repo, path = NULL, metadata = "datastorr.json",
   branch = "master", private = FALSE, refetch = FALSE, version = NULL,
   extended = FALSE)
+
+datastorr_versions(..., local = TRUE)
 }
 \arguments{
 \item{repo}{Either a github repo in the form
 \code{<username>/<repo>} (e.g.,
-\code{"richfitz/datastorr.example"} or the path to a json file
+\code{"richfitz/data"} or the path to a json file
 on your filesystem.}
 
 \item{path}{The path to store the data at.  Using \code{NULL} will}
@@ -37,6 +40,10 @@ fetched.}
 
 \item{extended}{Don't fetch the data, but instead return an object
 that can query data, versions, etc.}
+
+\item{...}{Arguments passed through to \code{datastorr}}
+
+\item{local}{Return information on local versions?}
 }
 \description{
 Create a lightweight datastorr interface (rather than using the
@@ -56,7 +63,7 @@ anyway.
 \examples{
 \dontrun{
 path <- tempfile()
-dat <- datastorr("richfitz/datastorr.example", tempfile())
+dat <- datastorr("richfitz/data", path, extended=TRUE)
 dat$list()
 dat()
 }
