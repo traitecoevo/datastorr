@@ -22,10 +22,13 @@ free to replace these with your own.}
 
 \item{cache}{Logical, indicating whether we should cache the
 token.  If \code{TRUE}, the token will be cached at
-\code{rappdirs::user_data_dir}, in the \code{datastorr}
-directory, so that it is accessible to all datastorr usages.
-Alternatively, set \code{FALSE} to do no caching and be prompted
-each session or a string to choose your own filename.}
+\code{\link{datastorr_auth}()}, so that it is accessible to all
+datastorr usages.  Note that this is affected by the
+\code{datastorr.path} global option.  Alternatively, set
+\code{FALSE} to do no caching and be prompted each session or a
+string to choose your own filename.  Or set the
+\code{GITHUB_TOKEN} or \code{GITHUB_PAT} environment variables
+to use a token rather than OAuth.}
 
 \item{path}{Path to environment file; the default is the user
 environment variable file which is usually a good choice.}

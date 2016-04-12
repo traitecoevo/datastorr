@@ -159,7 +159,7 @@ datastorr_info <- function(repo, path=NULL, metadata="datastorr.json",
   } else {
     if (is.null(path)) {
       check_repo(repo)
-      path <- github_release_path(repo)
+      path <- datastorr_path(repo)
     }
     ## TODO: in the case of non-NULL path, consider stuffing the
     ## metadata into the storr above (so that things are self
@@ -249,4 +249,27 @@ check_repo <- function(repo) {
   if (length(x) != 2L) {
     stop("Expected a string of form <username>/<repo> for 'repo'")
   }
+}
+
+##' Location of datastorr files.  This is determined by
+##' \code{rappdirs} using the \code{user_data_dir} function.
+##' Alternatively, if the option \code{datastorr.path} is set, that is
+##' used for the base path.  The path to data from an actual repo is
+##' stored in a subdirectory under this directory.
+##'
+##' Files in this directory can be deleted at will (e.g., running
+##' \code{unlink(datastorr_path(), recursive=TRUE)} will delete all
+##' files that datstorr has ever downloaded.  The only issue here is
+##' that the OAuth token (used to authenticate with GitHub) is also
+##' stored in this directory.
+##'
+##' @title Location of datastorr files
+##'
+##' @param repo An optional repo (of the form \code{user/repo}, though
+##'   this is not checked).
+##'
+##' @export
+datastorr_path <- function(repo=NULL) {
+  path <- getOption("datastorr.path", rappdirs::user_data_dir("datastorr"))
+  if (is.null(repo)) path else  file.path(path, repo)
 }

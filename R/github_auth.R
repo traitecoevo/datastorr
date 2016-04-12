@@ -21,10 +21,13 @@
 ##'   free to replace these with your own.
 ##' @param cache Logical, indicating whether we should cache the
 ##'   token.  If \code{TRUE}, the token will be cached at
-##'   \code{rappdirs::user_data_dir}, in the \code{datastorr}
-##'   directory, so that it is accessible to all datastorr usages.
-##'   Alternatively, set \code{FALSE} to do no caching and be prompted
-##'   each session or a string to choose your own filename.
+##'   \code{\link{datastorr_auth}()}, so that it is accessible to all
+##'   datastorr usages.  Note that this is affected by the
+##'   \code{datastorr.path} global option.  Alternatively, set
+##'   \code{FALSE} to do no caching and be prompted each session or a
+##'   string to choose your own filename.  Or set the
+##'   \code{GITHUB_TOKEN} or \code{GITHUB_PAT} environment variables
+##'   to use a token rather than OAuth.
 ##' @export
 datastorr_auth <- function(required=FALSE, key=NULL, secret=NULL, cache=TRUE) {
   token <- github_token()
@@ -57,7 +60,11 @@ datastorr_oauth <- function(key=NULL, secret=NULL, cache=TRUE) {
     secret <- "4e83b024b12bb249f1052cfb1c259bd3baa5e672"
   }
   if (isTRUE(unname(cache))) {
-    cache <- file.path(rappdirs::user_data_dir("datastorr"), "httr-oath")
+    ## Here, we might want to consider trying both the option with and
+    ## without the options for datastorr.path because if an option is
+    ## set we don't want to have to redo the auth just for that
+    ## application?
+    cache <- file.path(datastorr_path(), "httr-oath")
     dir.create(dirname(cache), FALSE, TRUE)
   }
   endpoint <- httr::oauth_endpoints("github")

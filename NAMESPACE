@@ -3,6 +3,7 @@
 export(autogenerate)
 export(datastorr)
 export(datastorr_auth)
+export(datastorr_path)
 export(datastorr_versions)
 export(fetch_hook_download)
 export(github_release_create)

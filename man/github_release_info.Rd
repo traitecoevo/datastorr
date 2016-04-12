@@ -25,7 +25,8 @@ will be treated as a filename glob.  So you can do
 computed on each release).}
 
 \item{path}{Optional path in which to store the data.  If omitted
-we use \code{rappdirs} to generate a reasonable path.}
+we use \code{\link{datastorr_path}} to generate a reasonable
+path.}
 }
 \description{
 Information to describe how to process github releases

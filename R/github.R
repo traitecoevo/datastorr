@@ -24,7 +24,8 @@
 ##'   computed on each release).
 ##'
 ##' @param path Optional path in which to store the data.  If omitted
-##'   we use \code{rappdirs} to generate a reasonable path.
+##'   we use \code{\link{datastorr_path}} to generate a reasonable
+##'   path.
 ##'
 ##' @export
 github_release_info <- function(repo, read,
@@ -32,7 +33,7 @@ github_release_info <- function(repo, read,
                                 filename=NULL,
                                 path=NULL) {
   if (is.null(path)) {
-    path <- github_release_path(repo)
+    path <- datastorr_path(repo)
   }
   if (length(filename) > 1L) {
     stop("Multiple filenames not yet handled")
@@ -41,10 +42,6 @@ github_release_info <- function(repo, read,
   structure(list(path=path, repo=repo, private=private,
                  filename=filename, read=read),
             class="github_release_info")
-}
-
-github_release_path <- function(repo) {
-  rappdirs::user_data_dir(file.path("datastorr", repo))
 }
 
 ##' Get release versions

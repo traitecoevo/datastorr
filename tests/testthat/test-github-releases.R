@@ -7,7 +7,7 @@ test_that("github_release", {
 
   info <- github_release_info("wcornwell/taxonlookup", read_csv)
 
-  path <- github_release_path(info$repo)
+  path <- datastorr_path(info$repo)
   exists <- file.exists(path)
 
   expect_is(info, "github_release_info")
