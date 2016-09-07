@@ -69,7 +69,7 @@ github_release_create <- function(info, description=NULL,
 
   dat <- github_release_package_info(info, target)
 
-  github_release_create1(info, dat, filename, version, description,
+  github_release_create_(info, dat, filename, version, description,
                          ignore_dirty, yes)
 }
 
