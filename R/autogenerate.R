@@ -61,6 +61,7 @@ autogenerate <- function(repo, read, filename=NULL, name=basename(repo),
                          roxygen=TRUE) {
   loadNamespace("whisker")
   template <- readLines(system.file("template.whisker", package=.packageName))
+  
   if (is.null(filename)) {
     filename <- "NULL"
   } else {
@@ -78,5 +79,6 @@ autogenerate <- function(repo, read, filename=NULL, name=basename(repo),
   ## Part of a workaround around a whisker bug:
   x <- gsub("{ ", "{", x, fixed=TRUE)
   x <- gsub(" }", "}", x, fixed=TRUE)
-  x
+  
+  cat(x, fill = TRUE, sep = "\n")
 }
