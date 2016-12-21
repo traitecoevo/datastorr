@@ -23,7 +23,7 @@
 ##' @seealso \code{\link{storr_external}}
 ##' @export
 fetch_hook_download <- function(furl, fread) {
-  assert_function(url)
+  assert_function(furl)
   assert_function(fread)
   function(key, namespace) {
     url <- furl(key, namespace)
