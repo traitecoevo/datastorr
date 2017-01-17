@@ -60,9 +60,7 @@ github_api_releases <- function(info) {
                    query=list(per_page=100),
                    datastorr_auth(info$private))
   httr::stop_for_status(dat)
-  response <- httr::content(dat)
-  if (length(response) == 0) stop("0 length reponse from Github. Check that there is at least one release, and that you have access to the repository if it is private")
-  return(response)
+  httr::content(dat)
 }
 
 github_api_release_delete <- function(info, version, yes=FALSE) {
