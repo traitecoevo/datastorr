@@ -78,5 +78,9 @@ autogenerate <- function(repo, read, filename=NULL, name=basename(repo),
   ## Part of a workaround around a whisker bug:
   x <- gsub("{ ", "{", x, fixed=TRUE)
   x <- gsub(" }", "}", x, fixed=TRUE)
-  x
+  if (is.null(filename)) {
+    cat(x, sep = "\n")
+  } else {
+    x
+  }
 }
