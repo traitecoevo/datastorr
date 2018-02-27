@@ -61,6 +61,10 @@ datastorr <- function(repo, path=NULL,
     }
     obj
   } else {
+    version <- version %||% obj$version_current()
+    if (is.null(version)) {
+      stop(sprintf("No versions found at '%s'", info$repo))
+    }
     obj$get(version)
   }
 }

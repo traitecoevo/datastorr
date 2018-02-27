@@ -30,3 +30,8 @@ test_that("basic usage", {
   obj$del(NULL)
   expect_false(file.exists(path))
 })
+
+test_that("private", {
+  expect_error(datastorr("mrc-ide/data_private", private = TRUE),
+               "No versions found at 'mrc-ide/data_private'")
+})

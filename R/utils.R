@@ -46,3 +46,8 @@ find_package_root <- function(stop_by="/") {
   }
   normalizePath(f("."), mustWork=TRUE)
 }
+
+
+`%||%` <- function(a, b) {
+  if (is.null(a)) b else a
+}
