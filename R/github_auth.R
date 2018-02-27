@@ -45,8 +45,13 @@ datastorr_auth <- function(required=FALSE, key=NULL, secret=NULL, cache=TRUE) {
 ## might be able to piggy back of that in some cases, but starting
 ## with GITHUB_TOKEN because it's more self explanatory and Hadley
 ## also uses that in the httr "Best practices" document.
+##
+## My token doesn't seem to have the right scope at present so
+## temporarily expandsing this a bit.
 github_token <- function() {
-  token <- Sys.getenv("GITHUB_TOKEN", Sys.getenv("GITHUB_PAT", ""))
+  token <- Sys.getenv("DATASTORR_TOKEN",
+                      Sys.getenv("GITHUB_TOKEN",
+                                 Sys.getenv("GITHUB_PAT", "")))
   if (token == "") {
     NULL
   } else {
