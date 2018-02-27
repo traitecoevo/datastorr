@@ -179,6 +179,7 @@ datastorr_info <- function(repo, path=NULL, metadata="datastorr.json",
       tmp <- download_file(url, datastorr_auth(private))
       on.exit(file.remove(tmp))
       info <- read_metadata(tmp, repo, path)
+      info$private <- private
       cache$set("info", info)
     }
   }
