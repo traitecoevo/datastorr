@@ -49,7 +49,7 @@ R6_datastorr <- R6::R6Class(
 
       filename <- basename(sub("\\?.*$", "", url))
       ext <- tools::file_ext(filename)
-      if (!nzchar(ext)) {
+      if (nzchar(ext)) {
         ext <- paste0(".", ext)
       }
 
