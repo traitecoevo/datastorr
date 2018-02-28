@@ -62,8 +62,8 @@ loading your package and running \code{pkg::<name>_release()}.
 }
 \examples{
 writeLines(autogenerate("richfitz/datastorr.example",
-                        read="readRDS", name="mydata"))
+                        read = "readRDS", name = "mydata"))
 writeLines(autogenerate("richfitz/datastorr.example",
-                        read="readRDS", name="mydata",
-                        roxygen=FALSE))
+                        read = "readRDS", name = "mydata",
+                        roxygen = FALSE))
 }

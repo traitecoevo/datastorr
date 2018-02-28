@@ -21,7 +21,7 @@ accessing private repositories without authorisation.}
 \item{filename}{Optional filename.  If omitted, all files in the
 release can be used.  If the filename contains a star ("*") it
 will be treated as a filename glob.  So you can do
-\code{filename="*.csv"} to match all csv files (dynamically
+\code{filename = "*.csv"} to match all csv files (dynamically
 computed on each release).}
 
 \item{path}{Optional path in which to store the data.  If omitted

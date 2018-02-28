@@ -16,7 +16,7 @@ github_release_version_current(info, local = TRUE)
 version numbers?  Github version numbers are pulled once per
 session only.  The exception is for
 \code{github_release_version_current} which when given
-\code{local=TRUE} will fall back on trying github if there are
+\code{local = TRUE} will fall back on trying github if there are
 no local versions.}
 }
 \description{
