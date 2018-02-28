@@ -92,11 +92,11 @@ R6_datastorr <- R6::R6Class(
         unlink(file.path(self$path, "file"), recursive = TRUE)
         self$storr$destroy()
       } else {
-        file <- self$get(version)
+        file <- self$storr$get(version, "file")
         unlink(file.path(self$path, "file", file))
-        self$del(version, "file")
-        self$del(version, "hash")
-        self$del(version)
+        self$storr$del(version, "file")
+        self$storr$del(version, "hash")
+        self$cache$del(version)
       }
     }
   ))
