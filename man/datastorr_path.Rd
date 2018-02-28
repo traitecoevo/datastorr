@@ -19,7 +19,7 @@ stored in a subdirectory under this directory.
 }
 \details{
 Files in this directory can be deleted at will (e.g., running
-\code{unlink(datastorr_path(), recursive=TRUE)} will delete all
+\code{unlink(datastorr_path(), recursive = TRUE)} will delete all
 files that datstorr has ever downloaded.  The only issue here is
 that the OAuth token (used to authenticate with GitHub) is also
 stored in this directory.

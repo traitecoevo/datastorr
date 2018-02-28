@@ -4,10 +4,13 @@
 ##
 ## TODO: rewrite to use curl only, possibly with gabor's progress bar
 ## package.
-download_file <- function(url, ..., dest=tempfile(), overwrite=FALSE) {
+download_file <- function(url, ..., dest = tempfile(), overwrite = FALSE,
+                          verbose = TRUE, binary = FALSE) {
   content <- httr::GET(url,
                        httr::write_disk(dest, overwrite),
-                       httr::progress("down"), ...)
+                       if (verbose) httr::progress("down"),
+                       if (binary) httr::accept("application/octet-stream"),
+                       ...)
   cat("\n")
   code <- httr::status_code(content)
   if (code >= 300L) {

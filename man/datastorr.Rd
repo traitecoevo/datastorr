@@ -63,7 +63,7 @@ anyway.
 \examples{
 \dontrun{
 path <- tempfile()
-dat <- datastorr("richfitz/data", path, extended=TRUE)
+dat <- datastorr("richfitz/data", path, extended = TRUE)
 dat$list()
 dat()
 }

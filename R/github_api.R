@@ -168,6 +168,40 @@ github_api_catch_error <- function(r, message=NULL) {
   }
 }
 
+
+github_api_release_url <- function(version, filename, repo, private) {
+  dat <- github_api_cache(private)$get(repo)
+  x <- dat[[strip_v(version)]]
+  if (is.null(x)) {
+    stop("No such release ", version)
+  }
+  files <- vcapply(x$assets, "[[", "name")
+  if (is.null(filename)) {
+    if (length(files) == 1L) {
+      i <- 1L
+    } else {
+      stop("Multiple files not yet handled and no filename given")
+    }
+  } else {
+    i <- match(filename, files)
+    if (is.na(i)) {
+      # TODO: this does not report found filename
+      stop(sprintf("File %s not found in release (did find: )",
+                   filename, paste(files, collapse=", ")))
+    }
+  }
+
+  if (private) {
+    ## https://stackoverflow.com/a/35688093
+    token <- datastorr_auth(private, token_only = TRUE)
+    url <- sprintf("%s?access_token=%s", x$assets[[i]]$url, token)
+  } else {
+    url <- x$assets[[i]]$browser_download_url
+  }
+  url
+}
+
+
 ## Consistently deal with leading vs; we'll just remove them
 ## everywhere that has them and that way vx.y.z will match x.y.z and
 ## v.v.  Pretty strict matching though.

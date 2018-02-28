@@ -45,16 +45,16 @@
 ##' @examples
 ##' \dontrun{
 ##' path <- tempfile()
-##' dat <- datastorr("richfitz/data", path, extended=TRUE)
+##' dat <- datastorr("richfitz/data", path, extended = TRUE)
 ##' dat$list()
 ##' dat()
 ##' }
-datastorr <- function(repo, path=NULL,
-                      metadata="datastorr.json", branch="master",
-                      private=FALSE, refetch=FALSE,
-                      version=NULL, extended=FALSE) {
+datastorr <- function(repo, path = NULL,
+                      metadata = "datastorr.json", branch = "master",
+                      private = FALSE, refetch = FALSE,
+                      version = NULL, extended = FALSE) {
   info <- datastorr_info(repo, path, metadata, branch, private, refetch)
-  obj <- .R6_datastorr$new(info)
+  obj <- R6_datastorr$new(info)
   if (extended) {
     if (!is.null(version)) {
       warning("Ignoring argument 'version'")
@@ -69,37 +69,15 @@ datastorr <- function(repo, path=NULL,
   }
 }
 
+
 ##' @param ... Arguments passed through to \code{datastorr}
 ##' @param local Return information on local versions?
 ##' @export
 ##' @rdname datastorr
-datastorr_versions <- function(..., local=TRUE) {
-  datastorr(..., extended=TRUE)$versions(local)
+datastorr_versions <- function(..., local = TRUE) {
+  datastorr(..., extended = TRUE)$versions(local)
 }
 
-.R6_datastorr <- R6::R6Class(
-  "datastorr",
-  public=list(
-    info=NULL,
-    path=NULL,
-    initialize=function(info) {
-      self$info <- info
-      self$path <- info$path
-      lockBinding(quote(info), self)
-      lockBinding(quote(path), self)
-    },
-    get=function(version=NULL) {
-      github_release_get(self$info, version)
-    },
-    versions=function(local=TRUE) {
-      github_release_versions(self$info, local)
-    },
-    version_current=function(local=TRUE) {
-      github_release_version_current(self$info, local)
-    },
-    del=function(version) {
-      github_release_del(self$info, version)
-    }))
 
 ##' Create a relase for a simple datastorr (i.e., non-package based).
 ##'
@@ -135,11 +113,11 @@ datastorr_versions <- function(..., local=TRUE) {
 ##' @param yes Skip the confirmation prompt?  Only prompts if
 ##'   interactive.
 ##' @export
-release <- function(repo, version, description=NULL, filename=NULL, path=NULL,
-                    metadata="datastorr.json", branch="master",
-                    private=FALSE, refetch=FALSE,
-                    target=NULL, ignore_dirty=FALSE,
-                    yes=!interactive()) {
+release <- function(repo, version, description = NULL, filename = NULL,
+                    path = NULL, metadata = "datastorr.json",
+                    branch = "master", private = FALSE, refetch = FALSE,
+                    target = NULL, ignore_dirty = FALSE,
+                    yes = !interactive()) {
   info <- datastorr_info(repo, path, metadata, branch, private, refetch)
   if (is.null(filename)) {
     filename <- info$filename
@@ -153,8 +131,9 @@ release <- function(repo, version, description=NULL, filename=NULL, path=NULL,
                          ignore_dirty, yes)
 }
 
-datastorr_info <- function(repo, path=NULL, metadata="datastorr.json",
-                           branch="master", private=FALSE, refetch=FALSE) {
+datastorr_info <- function(repo, path = NULL, metadata = "datastorr.json",
+                           branch = "master", private = FALSE,
+                           refetch = FALSE) {
   if (file.exists(repo)) {
     info <- read_metadata(repo, NULL, path)
     if (private && is.null(info$private)) {
@@ -170,7 +149,7 @@ datastorr_info <- function(repo, path=NULL, metadata="datastorr.json",
     ## contained) but into a different namespace (e.g. metadata).
     ##
     ## TODO: add support for a options() path for storing file at.
-    cache <- storr::storr_rds(path, default_namespace="datastorr")
+    cache <- storr::storr_rds(path, default_namespace = "datastorr")
     if (cache$exists("info") && !refetch) {
       info <- cache$get("info")
     } else {
@@ -186,18 +165,19 @@ datastorr_info <- function(repo, path=NULL, metadata="datastorr.json",
   info
 }
 
-read_metadata <- function(filename, repo=NULL, path=NULL) {
+read_metadata <- function(filename, repo = NULL, path = NULL) {
   req <- c("read")
   valid <- union(req, c("repo", "filename", "private", "args"))
 
   info <- jsonlite::fromJSON(filename)
   err <- setdiff(req, names(info))
   if (length(err) > 0L) {
-    stop("Missing required files in metadata file: ", paste(err, collapse=", "))
+    stop("Missing required files in metadata file: ",
+         paste(err, collapse = ", "))
   }
   err <- setdiff(names(info), valid)
   if (length(err) > 0L) {
-    stop("Unexpected data in metadata file: ", paste(err, collapse=", "))
+    stop("Unexpected data in metadata file: ", paste(err, collapse = ", "))
   }
 
   if (is.null(info$repo)) {
@@ -218,7 +198,7 @@ read_metadata <- function(filename, repo=NULL, path=NULL) {
 
   ## So this is fundamentally dangerous because it evaluates code
   ## straight from the internet.  Worth thinking about!
-  expr <- parse(text=info$read, keep.source=FALSE)
+  expr <- parse(text = info$read, keep.source = FALSE)
   fn_def <- function(x) {
     is.name(x) || (
       is.recursive(x) && (
@@ -229,13 +209,13 @@ read_metadata <- function(filename, repo=NULL, path=NULL) {
   if (!ok) {
     stop("`read` must be a function definition or symbol")
   }
-  read <- eval(expr, envir=.GlobalEnv)
+  read <- eval(expr, envir = .GlobalEnv)
 
   ## The other way of doing this is to store:
   ##
-  ##   "read": "function(x) read.csv(x, stringsAsFactors=TRUE)"
+  ##   "read": "function(x) read.csv(x, stringsAsFactors = TRUE)"
   ##
-  ## which evaluates to a function iwith all the right bits bound.
+  ## which evaluates to a function with all the right bits bound.
   if ("args" %in% names(info)) {
     read_fun <- read
     args <- info$args
@@ -250,7 +230,7 @@ check_repo <- function(repo) {
   if (length(repo) != 1L) {
     stop("Expected a scalar for 'repo'")
   }
-  x <- strsplit(repo, "/", fixed=TRUE)[[1L]]
+  x <- strsplit(repo, "/", fixed = TRUE)[[1L]]
   if (length(x) != 2L) {
     stop("Expected a string of form <username>/<repo> for 'repo'")
   }
@@ -263,7 +243,7 @@ check_repo <- function(repo) {
 ##' stored in a subdirectory under this directory.
 ##'
 ##' Files in this directory can be deleted at will (e.g., running
-##' \code{unlink(datastorr_path(), recursive=TRUE)} will delete all
+##' \code{unlink(datastorr_path(), recursive = TRUE)} will delete all
 ##' files that datstorr has ever downloaded.  The only issue here is
 ##' that the OAuth token (used to authenticate with GitHub) is also
 ##' stored in this directory.
@@ -274,7 +254,7 @@ check_repo <- function(repo) {
 ##'   this is not checked).
 ##'
 ##' @export
-datastorr_path <- function(repo=NULL) {
+datastorr_path <- function(repo = NULL) {
   path <- getOption("datastorr.path", rappdirs::user_data_dir("datastorr"))
   if (is.null(repo)) path else  file.path(path, repo)
 }

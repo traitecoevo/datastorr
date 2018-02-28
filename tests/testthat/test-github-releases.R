@@ -22,9 +22,9 @@ test_that("github_release", {
   expect_identical(info$path, path)
   expect_false(file.exists(path))
 
-  st <- storr_github_release(info)
+  st <- R6_datastorr$new(info)
   expect_true(file.exists(path))
-  expect_is(st, "storr")
+  expect_is(st$storr, "storr")
   expect_identical(st$list(), character(0))
 
   expect_identical(github_release_versions(info), character(0))
