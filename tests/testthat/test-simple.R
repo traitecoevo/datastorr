@@ -30,3 +30,11 @@ test_that("basic usage", {
   obj$del(NULL)
   expect_false(file.exists(path))
 })
+
+## Just a smoke test for now:
+test_that("private", {
+  skip_if_no_github_token()
+  obj <- datastorr("mrc-ide/data_private", tempfile(),
+                   private = TRUE, extended = TRUE)
+  expect_is(obj$get(), "data.frame")
+})
