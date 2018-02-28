@@ -7,7 +7,7 @@ test_that("basic", {
   res2 <- autogenerate("richfitz/datastorr.example", "readRDS", name="mydata",
                        roxygen=FALSE)
   expect_lt(length(res2), length(res))
-  expect_mt(length(res2), 0)
+  expect_gt(length(res2), 0)
   expect_true(all(res2 %in% res))
 
   skip_if_no_downloads()
