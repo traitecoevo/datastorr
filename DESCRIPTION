@@ -6,8 +6,8 @@ Maintainer: Rich FitzJohn <rich.fitzjohn@gmail.com>
 Description: Simple dataversioning using GitHub to store data.
 License: MIT + file LICENSE
 LazyData: true
-URL: https://github.com/richfitz/datastorr
-BugReports: https://github.com/richfitz/datastorr/issues
+URL: https://github.com/ropenscilabs/datastorr
+BugReports: https://github.com/ropenscilabs/datastorr/issues
 Imports:
     httr,
     jsonlite,
