@@ -120,8 +120,6 @@ github_release_del <- function(info, version) {
 ## because the API url requires passing a "application/octet-stream"
 ## through to the GET.
 fetch_hook_github_release <- function(info) {
-  ## fetch_hook_download(function(key, namespace) )
-  ## TODO: Some of the difficulty here will vanish when
   furl <- function(key, namespace) {
     dat <- github_api_cache(info$private)$get(info$repo)
     x <- dat[[strip_v(key)]]
@@ -143,9 +141,18 @@ fetch_hook_github_release <- function(info) {
                      info$filename, paste(files, collapse=", ")))
       }
     }
-    x$assets[[i]]$browser_download_url
+
+    if (info$private) {
+      ## https://stackoverflow.com/a/35688093
+      token <- datastorr_auth(info$private, token_only = TRUE)
+      url <- sprintf("%s?access_token=%s", x$assets[[i]]$url, token)
+    } else {
+      url <- x$assets[[i]]$browser_download_url
+    }
+    url
   }
-  fetch_hook_download(furl, info$read)
+  fetch_hook_download(furl, info$read,
+                      httr::accept("application/octet-stream"))
 }
 
 storr_github_release <- function(info) {

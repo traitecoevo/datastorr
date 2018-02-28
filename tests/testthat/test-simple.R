@@ -32,6 +32,7 @@ test_that("basic usage", {
 })
 
 test_that("private", {
+  skip("wip")
   expect_error(datastorr("mrc-ide/data_private", private = TRUE),
                "No versions found at 'mrc-ide/data_private'")
 })

@@ -28,11 +28,13 @@
 ##'   string to choose your own filename.  Or set the
 ##'   \code{GITHUB_TOKEN} or \code{GITHUB_PAT} environment variables
 ##'   to use a token rather than OAuth.
+##' @param token_only return the token only
 ##' @export
-datastorr_auth <- function(required=FALSE, key=NULL, secret=NULL, cache=TRUE) {
-  token <- github_token()
+datastorr_auth <- function(required=FALSE, key=NULL, secret=NULL, cache=TRUE,
+                           token_only = FALSE) {
+  token <- github_token(token_only)
   ## Only go out to OAuth if required:
-  if (required && is.null(token)) {
+  if (!token_only && required && is.null(token)) {
     token <- datastorr_oauth(key, secret, cache)
   }
   if (required && is.null(token)) {
@@ -48,12 +50,14 @@ datastorr_auth <- function(required=FALSE, key=NULL, secret=NULL, cache=TRUE) {
 ##
 ## My token doesn't seem to have the right scope at present so
 ## temporarily expandsing this a bit.
-github_token <- function() {
+github_token <- function(token_only = FALSE) {
   token <- Sys.getenv("DATASTORR_TOKEN",
                       Sys.getenv("GITHUB_TOKEN",
                                  Sys.getenv("GITHUB_PAT", "")))
   if (token == "") {
     NULL
+  } else if (token_only) {
+    token
   } else {
     httr::authenticate(token, "x-oauth-basic", "basic")
   }

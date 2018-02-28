@@ -20,14 +20,17 @@
 ##'   \code{function(filename) read.csv(filename,
 ##'   stringsAsFactors=FALSE)}).
 ##'
+##' @param ... Additional parameters that will be passed through to
+##'   download the file (via \code{httr::GET}).
+##'
 ##' @seealso \code{\link{storr_external}}
 ##' @export
-fetch_hook_download <- function(furl, fread) {
+fetch_hook_download <- function(furl, fread, ...) {
   assert_function(url)
   assert_function(fread)
   function(key, namespace) {
     url <- furl(key, namespace)
-    dest <- download_file(url)
+    dest <- download_file(url, ...)
     on.exit(file.remove(dest))
     fread(dest)
   }
