@@ -4,7 +4,7 @@
 \alias{fetch_hook_download}
 \title{Hook for downloading files}
 \usage{
-fetch_hook_download(furl, fread)
+fetch_hook_download(furl, fread, ...)
 }
 \arguments{
 \item{furl}{Function to convert \code{key, namespace} into a URL.
@@ -21,6 +21,9 @@ valid format.  Functions \code{read.csv}, \code{readRDS} can be
 used here as-is (though for the former consider
 \code{function(filename) read.csv(filename,
 stringsAsFactors=FALSE)}).}
+
+\item{...}{Additional parameters that will be passed through to
+download the file (via \code{httr::GET}).}
 }
 \description{
 Storr hook for downloading files as an external resource.  This
@@ -31,4 +34,3 @@ this package (which drags in curl) and use this as the
 \seealso{
 \code{\link{storr_external}}
 }
-

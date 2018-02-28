@@ -16,4 +16,3 @@ the entire storr}
 Delete a local copy of a version (or all local copies).  Note that
 that does not affect the actual github release in any way!.
 }
-

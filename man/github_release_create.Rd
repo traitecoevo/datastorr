@@ -56,4 +56,3 @@ This function also requires the \code{GITHUB_TOKEN} environment
 variable to be set, and for the token to be authorised to have
 write access to your repositories.
 }
-

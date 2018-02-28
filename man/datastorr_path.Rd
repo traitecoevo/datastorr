@@ -24,4 +24,3 @@ files that datstorr has ever downloaded.  The only issue here is
 that the OAuth token (used to authenticate with GitHub) is also
 stored in this directory.
 }
-

@@ -38,4 +38,3 @@ that the web interface displays).  For example, a single csv file.
 In that case the filename argument can be safely ommited and we'll
 work it out based on the filename.
 }
-

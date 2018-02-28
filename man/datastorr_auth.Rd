@@ -6,7 +6,7 @@
 \title{datastorr/GitHub authentication}
 \usage{
 datastorr_auth(required = FALSE, key = NULL, secret = NULL,
-  cache = TRUE)
+  cache = TRUE, token_only = FALSE)
 
 setup_github_token(path = "~/.Renviron")
 }
@@ -30,6 +30,8 @@ string to choose your own filename.  Or set the
 \code{GITHUB_TOKEN} or \code{GITHUB_PAT} environment variables
 to use a token rather than OAuth.}
 
+\item{token_only}{return the token only}
+
 \item{path}{Path to environment file; the default is the user
 environment variable file which is usually a good choice.}
 }
@@ -48,4 +50,3 @@ Either can be revoked at any time
 access token and \url{https://github.com/settings/applications} to
 revoke the OAuth token.
 }
-

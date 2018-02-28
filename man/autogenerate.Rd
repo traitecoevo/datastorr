@@ -67,4 +67,3 @@ writeLines(autogenerate("richfitz/datastorr.example",
                         read="readRDS", name="mydata",
                         roxygen=FALSE))
 }
-

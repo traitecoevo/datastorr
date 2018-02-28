@@ -16,4 +16,3 @@ current version as returned by
 \description{
 Get a version of a data set, downloading it if necessary.
 }
-

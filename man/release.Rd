@@ -62,4 +62,3 @@ interactive.}
 \description{
 Create a relase for a simple datastorr (i.e., non-package based).
 }
-
