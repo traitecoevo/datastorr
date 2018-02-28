@@ -105,7 +105,7 @@ setup_github_token <- function(path="~/.Renviron") {
   if (!prompt_confirm()) {
     stop("Cancelling", call.=FALSE)
   }
-  browseURL("https://github.com/settings/tokens/new")
+  utils::browseURL("https://github.com/settings/tokens/new")
 
   message("  5. paste your token in below and press return")
   token <- readline("GITHUB_TOKEN = ")
