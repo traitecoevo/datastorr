@@ -53,14 +53,14 @@
 ##' @export
 ##' @examples
 ##' writeLines(autogenerate("richfitz/datastorr.example",
-##'                         read="readRDS", name="mydata"))
+##'                         read = "readRDS", name = "mydata"))
 ##' writeLines(autogenerate("richfitz/datastorr.example",
-##'                         read="readRDS", name="mydata",
-##'                         roxygen=FALSE))
-autogenerate <- function(repo, read, filename=NULL, name=basename(repo),
-                         roxygen=TRUE) {
+##'                         read = "readRDS", name = "mydata",
+##'                         roxygen = FALSE))
+autogenerate <- function(repo, read, filename = NULL, name = basename(repo),
+                         roxygen = TRUE) {
   loadNamespace("whisker")
-  template <- readLines(system.file("template.whisker", package=.packageName))
+  template <- readLines(system.file("template.whisker", package = "datastorr"))
   if (is.null(filename)) {
     filename <- "NULL"
   } else {
@@ -69,14 +69,14 @@ autogenerate <- function(repo, read, filename=NULL, name=basename(repo),
   if (!is.character(read)) {
     stop("Expected a string for the function")
   }
-  data <- list(repo=repo, read=read, name=name, filename=filename)
+  data <- list(repo = repo, read = read, name = name, filename = filename)
   x <- whisker::whisker.render(template, data)
   x <- strsplit(x, "\n")[[1]]
   if (!roxygen) {
     x <- x[!grepl("^##'", x)]
   }
   ## Part of a workaround around a whisker bug:
-  x <- gsub("{ ", "{", x, fixed=TRUE)
-  x <- gsub(" }", "}", x, fixed=TRUE)
+  x <- gsub("{ ", "{", x, fixed = TRUE)
+  x <- gsub(" }", "}", x, fixed = TRUE)
   x
 }

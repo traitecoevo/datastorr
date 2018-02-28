@@ -20,7 +20,7 @@
 ##' @param filename Optional filename.  If omitted, all files in the
 ##'   release can be used.  If the filename contains a star ("*") it
 ##'   will be treated as a filename glob.  So you can do
-##'   \code{filename="*.csv"} to match all csv files (dynamically
+##'   \code{filename = "*.csv"} to match all csv files (dynamically
 ##'   computed on each release).
 ##'
 ##' @param path Optional path in which to store the data.  If omitted
@@ -51,7 +51,7 @@ github_release_info <- function(repo, read, private = FALSE, filename = NULL,
 ##'   version numbers?  Github version numbers are pulled once per
 ##'   session only.  The exception is for
 ##'   \code{github_release_version_current} which when given
-##'   \code{local=TRUE} will fall back on trying github if there are
+##'   \code{local = TRUE} will fall back on trying github if there are
 ##'   no local versions.
 ##'
 ##' @export

@@ -75,7 +75,7 @@ R6_datastorr <- R6::R6Class(
       }
     },
 
-    version_current=function(local = TRUE) {
+    version_current = function(local = TRUE) {
       v <- self$versions(local)
       if (length(v) == 0L && local) {
         v <- self$versions(FALSE)

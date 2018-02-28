@@ -47,11 +47,9 @@
 ##'   interactive.
 ##'
 ##' @export
-github_release_create <- function(info, description=NULL,
-                                  filename=NULL,
-                                  target=NULL,
-                                  ignore_dirty=FALSE,
-                                  yes=!interactive()) {
+github_release_create <- function(info, description = NULL, filename = NULL,
+                                  target = NULL, ignore_dirty = FALSE,
+                                  yes = !interactive()) {
   if (is.null(filename)) {
     if (is.null(info$filename)) {
       stop("filename must be given")
@@ -63,7 +61,7 @@ github_release_create <- function(info, description=NULL,
   }
   if (is.null(info$filename)) {
     info$filename <- basename(filename)
-  } else if (grepl("/", info$filename, fixed=TRUE)) {
+  } else if (grepl("/", info$filename, fixed = TRUE)) {
     stop("Expected path-less info$filename")
   }
 
@@ -86,7 +84,7 @@ github_release_create_ <- function(info, dat, filename, version, description,
               paste0("    sha: ", dat$sha_remote$sha),
               paste0("    date: ", dat$sha_remote$committer$date),
               paste0("    message: ",
-                     paste(dat$sha_remote$message, collapse="\n")),
+                     paste(dat$sha_remote$message, collapse = "\n")),
               paste0("    by: ",
                      sprintf("%s <%s>",
                      dat$sha_remote$committer$name,
@@ -103,7 +101,7 @@ github_release_create_ <- function(info, dat, filename, version, description,
 
   message("Will create release:")
   message("  tag: ", version)
-  message(paste(msg_at, collapse="\n"))
+  message(paste(msg_at, collapse = "\n"))
   message(msg_file)
   message("  description: ",
           if (is.null(description)) "(no description)" else description)
@@ -125,7 +123,8 @@ github_release_create_ <- function(info, dat, filename, version, description,
   invisible(ret)
 }
 
-github_release_package_info <- function(info, sha_local=NULL, version=NULL) {
+github_release_package_info <- function(info, sha_local = NULL,
+                                        version = NULL) {
   ## This can be done with either system commands or with git2r.  Not
   ## entirely sure which is the least bad way of doing it.
   git <- Sys.which("git")
@@ -134,7 +133,7 @@ github_release_package_info <- function(info, sha_local=NULL, version=NULL) {
   }
 
   if (is.null(version)) {
-    git_root <- system2(git, c("rev-parse", "--show-toplevel"), stdout=TRUE)
+    git_root <- system2(git, c("rev-parse", "--show-toplevel"), stdout = TRUE)
     pkg_root <- find_package_root(git_root)
     dcf <- as.list(read.dcf(file.path(pkg_root, "DESCRIPTION"))[1,])
     version_local <- dcf$Version
@@ -144,24 +143,24 @@ github_release_package_info <- function(info, sha_local=NULL, version=NULL) {
   version_remote <- github_release_version_current(info, FALSE)
 
   if (is.null(sha_local)) {
-    sha_local <- system2(git, c("rev-parse", "HEAD"), stdout=TRUE)
+    sha_local <- system2(git, c("rev-parse", "HEAD"), stdout = TRUE)
   } else {
     err <- tempfile()
     on.exit(file.remove(err))
     res <- suppressWarnings(
-      system2(git, c("rev-parse", sha_local), stdout=TRUE, stderr=err))
-    code <- attr(res, "status", exact=TRUE)
+      system2(git, c("rev-parse", sha_local), stdout = TRUE, stderr = err))
+    code <- attr(res, "status", exact = TRUE)
     if (!is.null(code) && code != 0L) {
       stop(paste(c("Did not find sha in local git tree: ", readLines(err)),
-                 collapse="\n"))
+                 collapse = "\n"))
     }
     sha_local <- as.character(res)
   }
   sha_remote <- tryCatch(github_api_commit(info, sha_local),
-                         error=function(e) NULL)
+                         error = function(e) NULL)
 
   status <- system2(git, c("status", "--porcelain", "--untracked-files=no"),
-                    stdout=TRUE)
+                    stdout = TRUE)
   dirty <- length(status) > 0L
 
   nversion_local <- numeric_version(version_local)
@@ -171,24 +170,24 @@ github_release_package_info <- function(info, sha_local=NULL, version=NULL) {
     nversion_remote <- numeric_version(strip_v(version_remote))
   }
 
-  list(version_local=version_local,
-       version_remote=version_remote,
-       nversion_local=nversion_local,
-       nversion_remote=nversion_remote,
-       sha_local=sha_local,
-       sha_remote=sha_remote,
-       status=status,
-       dirty=dirty)
+  list(version_local = version_local,
+       version_remote = version_remote,
+       nversion_local = nversion_local,
+       nversion_remote = nversion_remote,
+       sha_local = sha_local,
+       sha_remote = sha_remote,
+       status = status,
+       dirty = dirty)
 }
 
-github_release_preflight <- function(dat, ignore_dirty=FALSE) {
+github_release_preflight <- function(dat, ignore_dirty = FALSE) {
   if (is.null(dat$sha_remote)) {
     stop(sprintf("Could not resolve sha %s on remote", dat$sha_local))
   }
 
   if (dat$dirty && !ignore_dirty) {
     msg <- paste(c("Local git is dirty (untracked files ignored):",
-                   dat$status), collapse="\n")
+                   dat$status), collapse = "\n")
     stop(msg)
   }
 

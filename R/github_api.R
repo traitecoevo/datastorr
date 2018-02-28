@@ -1,17 +1,17 @@
 ## Github API helpers.  There's a chance that some of this will port
 ## to use the gh package once it's on CRAN.
 
-cache <- new.env(parent=emptyenv())
+cache <- new.env(parent = emptyenv())
 github_api_cache <- function(private) {
   fetch <- function(key, namespace) {
-    ret <- github_api_releases(list(repo=key, private=private))
+    ret <- github_api_releases(list(repo = key, private = private))
     tag_names <- vcapply(ret, "[[", "tag_name")
     names(ret) <- strip_v(tag_names)
     i <- duplicated(names(ret))
     if (any(i)) {
       warning("Removing duplicated tag names: ",
               paste(sprintf("%s (%s)", names(ret)[i], tag_names[i]),
-                    collapse=", "))
+                    collapse = ", "))
       ret <- ret[!i]
     }
     ret
@@ -54,16 +54,16 @@ github_api_releases <- function(info) {
   ## TODO: This will be more nicely handled with the pagnation
   ## feature of Gabor's gh package but I'd rather that hits CRAN
   ## before depending on it.  Replace the following four lines with:
-  ##   ret <- gh::gh("/repos/:repo/releases", repo=key)
+  ##   ret <- gh::gh("/repos/:repo/releases", repo = key)
   url <- sprintf("https://api.github.com/repos/%s/releases", info$repo)
   dat <- httr::GET(url,
-                   query=list(per_page=100),
+                   query = list(per_page = 100),
                    datastorr_auth(info$private))
   httr::stop_for_status(dat)
   httr::content(dat)
 }
 
-github_api_release_delete <- function(info, version, yes=FALSE) {
+github_api_release_delete <- function(info, version, yes = FALSE) {
   message(sprintf("Deleting version %s from %s", version, info$repo))
   if (!yes && !prompt_confirm()) {
     stop("Not deleting release")
@@ -87,12 +87,12 @@ github_api_tag_delete <- function(info, tag_name) {
 }
 
 github_api_release_create <- function(info, version,
-                                      description=NULL, target=NULL) {
-  data <- list(tag_name=add_v(version),
-               body=description,
-               target_commitish=target)
+                                      description = NULL, target = NULL) {
+  data <- list(tag_name = add_v(version),
+               body = description,
+               target_commitish = target)
   url <- sprintf("https://api.github.com/repos/%s/releases", info$repo)
-  r <- httr::POST(url, body=drop_null(data), encode="json",
+  r <- httr::POST(url, body = drop_null(data), encode = "json",
                   datastorr_auth(TRUE))
   github_api_catch_error(r, "Failed to create release")
   github_api_cache_clear(info)
@@ -102,8 +102,8 @@ github_api_release_create <- function(info, version,
 github_api_release_upload <- function(info, version, filename, name) {
   x <- github_api_release_info(info, version)
   r <- httr::POST(sub("\\{.+$", "", x$upload_url),
-                  query=list(name=name),
-                  body=httr::upload_file(filename),
+                  query = list(name = name),
+                  body = httr::upload_file(filename),
                   httr::progress("up"),
                   datastorr_auth(TRUE))
   cat("\n") # clean up after httr's progress bar :(
@@ -113,13 +113,13 @@ github_api_release_upload <- function(info, version, filename, name) {
 }
 
 github_api_release_update <- function(info, version,
-                                      description=NULL, target=NULL) {
+                                      description = NULL, target = NULL) {
   x <- github_api_release_info(info, version)
-  data <- list(tag_name=version,
-               body=description,
-               target_commitish=target)
-  r <- httr::PATCH(x$url, body=drop_null(data),
-                   datastorr_auth(TRUE), encode="json")
+  data <- list(tag_name = version,
+               body = description,
+               target_commitish = target)
+  r <- httr::PATCH(x$url, body = drop_null(data),
+                   datastorr_auth(TRUE), encode = "json")
   httr::stop_for_status(r)
   github_api_cache_clear(info)
   invisible(httr::content(r))
@@ -131,7 +131,7 @@ github_api_repo <- function(info) {
   httr::stop_for_status(r)
   httr::content(r)
 }
-github_api_ref <- function(info, ref, type="heads") {
+github_api_ref <- function(info, ref, type = "heads") {
   type <- match.arg(type, c("heads", "tags"))
   url <- sprintf("https://api.github.com/repos/%s/git/refs/%s/%s",
                  info$repo, type, ref)
@@ -148,7 +148,7 @@ github_api_commit <- function(info, sha) {
   httr::content(r)
 }
 
-github_api_catch_error <- function(r, message=NULL) {
+github_api_catch_error <- function(r, message = NULL) {
   code <- httr::status_code(r)
   if (code > 300L) {
     x <- httr::content(r)
@@ -164,7 +164,7 @@ github_api_catch_error <- function(r, message=NULL) {
     if (!is.null(message)) {
       msg <- sprintf("%s: %s", message, msg)
     }
-    stop(msg, call.=FALSE)
+    stop(msg, call. = FALSE)
   }
 }
 
@@ -187,7 +187,7 @@ github_api_release_url <- function(version, filename, repo, private) {
     if (is.na(i)) {
       # TODO: this does not report found filename
       stop(sprintf("File %s not found in release (did find: )",
-                   filename, paste(files, collapse=", ")))
+                   filename, paste(files, collapse = ", ")))
     }
   }
 

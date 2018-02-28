@@ -2,7 +2,7 @@ context("github_release")
 
 test_that("github_release", {
   read_csv <- function(...) {
-    read.csv(..., stringsAsFactors=FALSE)
+    read.csv(..., stringsAsFactors = FALSE)
   }
 
   info <- github_release_info("wcornwell/taxonlookup", read_csv)
@@ -17,21 +17,21 @@ test_that("github_release", {
 
   ## for testing use a temporary file
   path <- tempfile("datastorr_")
-  on.exit(unlink(path, recursive=TRUE))
-  info <- github_release_info("wcornwell/taxonlookup", read_csv, path=path)
+  on.exit(unlink(path, recursive = TRUE))
+  info <- github_release_info("wcornwell/taxonlookup", read_csv, path = path)
   expect_identical(info$path, path)
   expect_false(file.exists(path))
 
   st <- R6_datastorr$new(info)
   expect_true(file.exists(path))
   expect_is(st$storr, "storr")
-  expect_identical(st$list(), character(0))
+  expect_identical(st$storr$list("file"), character(0))
 
   expect_identical(github_release_versions(info), character(0))
 
   skip_if_no_downloads()
   tmp <- github_release_versions(info, FALSE)
-  expect_more_than(length(tmp), 9)
+  expect_gt(length(tmp), 9)
 
   tmp <- github_release_version_current(info)
   expect_true(numeric_version(tmp) >= numeric_version("1.0.0"))
@@ -39,7 +39,7 @@ test_that("github_release", {
   dat <- github_release_get(info)
 
   expect_is(dat, "data.frame")
-  expect_identical(st$list(), tmp)
+  expect_identical(st$storr$list("file"), tmp)
   expect_identical(github_release_versions(info), tmp)
 
   github_release_del(info, tmp)
@@ -62,29 +62,29 @@ test_that("datastorr.example", {
   owd <- setwd(path)
   on.exit({
     setwd(owd)
-    unlink(path, recursive=TRUE)
+    unlink(path, recursive = TRUE)
   })
 
   ## A fairly unconventional way of loading the package :)
-  source("R/package.R", local=TRUE)
+  source("R/package.R", local = TRUE)
 
   info <- mydata_info(tempfile("datastorr_"))
 
-  d <- read.csv(file.path(owd, "example.csv"), stringsAsFactors=FALSE)
+  d <- read.csv(file.path(owd, "example.csv"), stringsAsFactors = FALSE)
   dd_contents <- lapply(d$dataset, get, as.environment("package:datasets"))
   names(dd_contents) <- d$dataset
 
   ## Temporary place to stick data:
   tmp <- tempfile("datastorr_")
   dir.create(tmp)
-  on.exit(unlink(tmp, recursive=TRUE), add=TRUE)
+  on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
   tmp_data_path <- function(x) file.path(tmp, paste0(x, ".rds"))
   lapply(d$dataset, function(x)
     saveRDS(get(x, "package:datasets"), tmp_data_path(x)))
   dd <- tmp_data_path(d$dataset)
 
   ## Need to delete everything:
-  github_api_delete_all_releases(info, yes=TRUE)
+  github_api_delete_all_releases(info, yes = TRUE)
 
   v_master <- numeric_version(read.dcf("DESCRIPTION")[, "Version"])
   last <- numeric_version("0.0.0")
@@ -92,7 +92,7 @@ test_that("datastorr.example", {
   f <- function(i) {
     sha <- d$target[[i]]
     system2("git", c("checkout", sha))
-    github_release_create(info, d$description[[i]], dd[[i]], sha, yes=TRUE)
+    github_release_create(info, d$description[[i]], dd[[i]], sha, yes = TRUE)
   }
 
   for (i in seq_len(nrow(d))) {
@@ -119,7 +119,7 @@ test_that("datastorr.example", {
     expect_equal(x$assets[[1]]$content_type, "application/octet-stream")
     expect_equal(x$body, d$description[[i]])
     expect_equal(x$target_commitish,
-                 system2("git", c("rev-parse", d$target[[i]]), stdout=TRUE))
+                 system2("git", c("rev-parse", d$target[[i]]), stdout = TRUE))
 
     last <- curr
   }
@@ -131,7 +131,7 @@ test_that("datastorr.example", {
   path_data <- file.path(tmp, "rock.rds")
   saveRDS(rock, path_data)
   expect_error(github_release_create(info, "should fail", path_data,
-                                     target="master", yes=TRUE),
+                                     target = "master", yes = TRUE),
                "is not ahead of remote version")
 
   ## Now, pull the data down and have a look:

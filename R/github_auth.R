@@ -30,8 +30,8 @@
 ##'   to use a token rather than OAuth.
 ##' @param token_only return the token only
 ##' @export
-datastorr_auth <- function(required=FALSE, key=NULL, secret=NULL, cache=TRUE,
-                           token_only = FALSE) {
+datastorr_auth <- function(required = FALSE, key = NULL, secret = NULL,
+                           cache = TRUE, token_only = FALSE) {
   token <- github_token(token_only)
   ## Only go out to OAuth if required:
   if (!token_only && required && is.null(token)) {
@@ -63,7 +63,7 @@ github_token <- function(token_only = FALSE) {
   }
 }
 
-datastorr_oauth <- function(key=NULL, secret=NULL, cache=TRUE) {
+datastorr_oauth <- function(key = NULL, secret = NULL, cache = TRUE) {
   if (is.null(key)) {
     key <- "d6da716e8eabccb6e3db"
     secret <- "4e83b024b12bb249f1052cfb1c259bd3baa5e672"
@@ -77,16 +77,16 @@ datastorr_oauth <- function(key=NULL, secret=NULL, cache=TRUE) {
     dir.create(dirname(cache), FALSE, TRUE)
   }
   endpoint <- httr::oauth_endpoints("github")
-  app <- httr::oauth_app("github/datastorr", key=key, secret=secret)
-  token <- httr::oauth2.0_token(endpoint, app, scope="repo", cache=cache)
-  httr::config(token=token)
+  app <- httr::oauth_app("github/datastorr", key = key, secret = secret)
+  token <- httr::oauth2.0_token(endpoint, app, scope = "repo", cache = cache)
+  httr::config(token = token)
 }
 
 ##' @export
 ##' @rdname datastorr_auth
 ##' @param path Path to environment file; the default is the user
 ##'   environment variable file which is usually a good choice.
-setup_github_token <- function(path="~/.Renviron") {
+setup_github_token <- function(path = "~/.Renviron") {
   if (file.exists(path)) {
     dat <- readLines(path)
     if (any(grepl("^\\s*GITHUB_TOKEN\\s*=[A-Za-z0-9]+\\s*$", dat))) {
@@ -103,7 +103,7 @@ setup_github_token <- function(path="~/.Renviron") {
   message("  3. copy the token or click the 'copy' button")
   message("  4. close the window and come back to R")
   if (!prompt_confirm()) {
-    stop("Cancelling", call.=FALSE)
+    stop("Cancelling", call. = FALSE)
   }
   utils::browseURL("https://github.com/settings/tokens/new")
 
@@ -112,7 +112,7 @@ setup_github_token <- function(path="~/.Renviron") {
   prompt <- sprintf("Add token %s to '%s'?",
                     sub("^(...).*(...)$", "\\1...\\2", token), path)
   if (nchar(token) == 0L || !prompt_confirm(prompt)) {
-    stop("Cancelling", call.=FALSE)
+    stop("Cancelling", call. = FALSE)
   }
 
   environ <- c("# Added by datastorr:", paste0("GITHUB_TOKEN=", token))
@@ -120,5 +120,5 @@ setup_github_token <- function(path="~/.Renviron") {
     environ <- c(readLines(path), environ)
   }
   writeLines(environ, path)
-  Sys.setenv(GITHUB_TOKEN=token)
+  Sys.setenv(GITHUB_TOKEN = token)
 }

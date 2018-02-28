@@ -21,6 +21,6 @@ download_file <- function(url, ..., dest = tempfile(), overwrite = FALSE,
 
 DownloadError <- function(url, code) {
   msg <- sprintf("Downloading %s failed with code %d", url, code)
-  structure(list(message=msg, call=NULL),
-            class=c("DownloadError", "error", "condition"))
+  structure(list(message = msg, call = NULL),
+            class = c("DownloadError", "error", "condition"))
 }
