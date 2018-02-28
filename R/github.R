@@ -42,6 +42,7 @@ github_release_info <- function(repo, read, private = FALSE, filename = NULL,
             class = "github_release_info")
 }
 
+
 ##' Get release versions
 ##' @title Get release versions
 ##' @param info Result of running \code{github_release_info}
@@ -56,25 +57,14 @@ github_release_info <- function(repo, read, private = FALSE, filename = NULL,
 ##' @export
 ##' @author Rich FitzJohn
 github_release_versions <- function(info, local = TRUE) {
-  if (local) {
-    R6_datastorr$new(info)$list()
-  } else {
-    rev(names(github_api_cache(info$private)$get(info$repo)))
-  }
+  R6_datastorr$new(info)$versions(local)
 }
+
 
 ##' @rdname github_release_versions
 ##' @export
 github_release_version_current <- function(info, local = TRUE) {
-  v <- github_release_versions(info, local)
-  if (length(v) == 0L && local) {
-    v <- github_release_versions(info, FALSE)
-  }
-  if (length(v) == 0L) {
-    NULL
-  } else {
-    v[[length(v)]]
-  }
+  R6_datastorr$new(info)$version_current(local)
 }
 
 ##' Get a version of a data set, downloading it if necessary.
@@ -87,11 +77,9 @@ github_release_version_current <- function(info, local = TRUE) {
 ##'
 ##' @export
 github_release_get <- function(info, version = NULL) {
-  if (is.null(version)) {
-    version <- github_release_version_current(info)
-  }
   R6_datastorr$new(info)$get(version)
 }
+
 
 ##' Delete a local copy of a version (or all local copies).  Note that
 ##' that does not affect the actual github release in any way!.
@@ -105,10 +93,5 @@ github_release_get <- function(info, version = NULL) {
 ##'
 ##' @export
 github_release_del <- function(info, version) {
-  st <- R6_datastorr$new(info)
-  if (is.null(version)) {
-    st$driver$destroy()
-  } else {
-    st$del(version)
-  }
+  R6_datastorr$new(info)$del(version)
 }
