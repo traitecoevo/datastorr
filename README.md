@@ -85,7 +85,7 @@ The simplest way is to run the (hidden) function `datastorr:::autogenerate`, as
 datastorr:::autogenerate(repo="richfitz/datastorr.example", read="readRDS", name="mydata")
 ```
 
-which will print to the screen a bunch of code to add do your package.  There will be a vignette explaining this more fully soon.  A file generated in this way can be seen  [here](https://github.com/richfitz/datastorr.example/blob/master/R/package.R).
+which will print to the screen a bunch of code to add to your package.  There will be a vignette explaining this more fully soon.  A file generated in this way can be seen  [here](https://github.com/richfitz/datastorr.example/blob/master/R/package.R).
 
 Once set up, new releases can be made by running, within your package directory:
 
