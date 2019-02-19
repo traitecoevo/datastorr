@@ -1,28 +1,24 @@
 # datastorr
 
-Simple data retrieval and versioning using GitHub to store data.
+Simple data retrieval and versioning using GitHub
 
-**Warning: the functions in here are subject to rationalisation over the next little bit, especially as I harmonise the interfaces**
+This project is described in a paper [preprint here](https://peerj.com/preprints/3401v1) by [Daniel Falster](https://github.com/dfalster/), [Rich FitzJohn](https://github.com/richfitz/), [Matthew Pennell](https://github.com/mwpennell/), and [Will Cornwell](https://github.com/wcornwell/). Below we describe the motivation and general idea. Please see the paper for full details.
 
 ## The problem
 
-There are a number of related problems that `datastorr` tries to address.  Mostly these fall into the category of:
+Over the last several years, there has been an increasing recognition that data is a first-class scientific product and a tremendous about of repositories and platforms have been developed to facilitate the storage, sharing, and re-use of data. However we think there is still an important gap in this ecosystem: platforms for data sharing offer limited functions for distributing and interacting with evolving datasets - those that continue to grow with time as more records are added, errors fixed, and new data structures are created. This is particularly the case for small to medium sized datasets that a typical scientific lab, or collection of labs, might produce.
 
-* You are working on an analysis that requires data that don't easily fit in GitHub
-* You need to distribute datafiles to people to use, but the data changes periodically
+In addition to enabling data creators to maintain and share a `living` dataset, ideally, such an infrastructure would allow enable data users to:
 
-The obvious solution to this is "put the files up online somewhere and download them when you need them".  This is what `datastorr` does.  But in doing so it tries to solve the auxillary problems:
-
-* Caching the downloads, including across R sessions, to make things faster and to work offline
-* Deal consistently with translating the file stored online into a loaded data object
+* Cache downloads, including across R sessions, to make things faster and to work offline
 * Keep track of which versions are downloaded and available remotely
-* Allows you to access multiple versions of the data at once (helpful if working out why results have changed)
+* Access multiple versions of the data at once; this would be especially helpful if trying to understand why results have changed with the version of the data.
 
 ## How datastorr helps
 
 This package can be used in two ways:
 
-1. Use data stored elsewhere in R efficiently (e.g. work with csv files that are too large to comfortably fit in git).
+1. Use data stored elsewhere in R efficiently (e.g., work with csv files that are too large to comfortably fit in git).
 2. Create another lightweight package designed to allow easy access to your data.
 
 For both of these use-cases, `datastorr` will store your data using _GitHub releases_ which do not clog up your repository but allow up to 2GB files to be stored (future versions may support things like figshare).
@@ -54,7 +50,7 @@ The user can see what versions they have locally
 datastorr.example::mydata_versions()
 ```
 
-and can see what versions are present on github:
+and can see what versions are present on GitHub:
 
 ```r
 datastorr.example::mydata_versions(local=FALSE) # remote
@@ -98,9 +94,9 @@ provided you have your `GITHUB_TOKEN` environment variable set appropriatey.  Se
 ## Installation
 
 ```r
-devtools::install_github("richfitz/datastorr")
+devtools::install_github("ropenscilabs/datastorr")
 ```
 
 ## License
 
-MIT + file LICENSE © [Rich FitzJohn](https://github.com/).
+MIT + file LICENSE © [Rich FitzJohn](https://github.com/richfitz).
