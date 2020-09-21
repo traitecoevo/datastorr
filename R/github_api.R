@@ -168,6 +168,15 @@ github_api_catch_error <- function(r, message = NULL) {
   }
 }
 
+github_api_source_url <- function(version, repo, private) {
+  dat <- github_api_cache(private)$get(repo)
+  x <- dat[[strip_v(version)]]
+  if (is.null(x)) {
+    stop("No such release ", version)
+  }
+  source_zip_url <- x$zipball_url
+  source_zip_url
+}
 
 github_api_release_url <- function(version, filename, repo, private) {
   dat <- github_api_cache(private)$get(repo)
@@ -183,7 +192,18 @@ github_api_release_url <- function(version, filename, repo, private) {
       stop("Multiple files not yet handled and no filename given")
     }
   } else {
-    i <- match(filename, files)
+    
+    # resolve here 
+    file_string_captures <- sapply(files, function(x) {grepl(filename, x, fixed = TRUE)})
+    resolved_filename <- files[which(file_string_captures)]
+    if(length(resolved_filename) != 1) {
+      stop(sprintf("File %s could not be resolved in release.",
+                   filename, paste(files, collapse = ", ")))
+    }
+    
+    i <- match(resolved_filename, files)
+    
+    # if (is.na(i)) original check 
     if (is.na(i)) {
       # TODO: this does not report found filename
       stop(sprintf("File %s not found in release (did find: )",
@@ -191,7 +211,7 @@ github_api_release_url <- function(version, filename, repo, private) {
     }
   }
 
-  if (private) {
+   if (private) {
     ## https://stackoverflow.com/a/35688093
     token <- datastorr_auth(private, token_only = TRUE)
     url <- sprintf("%s?access_token=%s", x$assets[[i]]$url, token)

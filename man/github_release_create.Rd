@@ -4,7 +4,7 @@
 \alias{github_release_create}
 \title{Create a github release}
 \usage{
-github_release_create(info, description = NULL, filename = NULL,
+github_release_create(info, description = NULL, filenames = NULL,
   target = NULL, ignore_dirty = FALSE, yes = !interactive())
 }
 \arguments{
@@ -13,13 +13,6 @@ github_release_create(info, description = NULL, filename = NULL,
 \item{description}{Optional text description for the release.  If
 this is omitted then GitHub will display the commit message from
 the commit that the release points at.}
-
-\item{filename}{Filename to upload; optional if in \code{info}.
-If listed in \code{info}, \code{filename} can be different but
-the file will be renamed to \code{info$filename} on uploading.
-If given but not in \code{info}, the uploaded file will be
-\code{basename(filename)} (i.e., the directory will be
-stripped).}
 
 \item{target}{Target of the release.  This can be either the name
 of a branch (e.g., \code{master}, \code{origin/master}),
@@ -36,6 +29,13 @@ files.}
 
 \item{yes}{Skip the confirmation prompt?  Only prompts if
 interactive.}
+
+\item{filename}{Filename to upload; optional if in \code{info}.
+If listed in \code{info}, \code{filename} can be different but
+the file will be renamed to \code{info$filename} on uploading.
+If given but not in \code{info}, the uploaded file will be
+\code{basename(filename)} (i.e., the directory will be
+stripped).}
 }
 \description{
 Create a github release for your package.  This tries very hard to

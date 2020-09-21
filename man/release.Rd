@@ -4,10 +4,10 @@
 \alias{release}
 \title{Release data to a datastorr repository}
 \usage{
-release(repo, version, description = NULL, filename = NULL, path = NULL,
-  metadata = "datastorr.json", branch = "master", private = FALSE,
-  refetch = FALSE, target = NULL, ignore_dirty = FALSE,
-  yes = !interactive())
+release(repo, version, description = NULL, filename = NULL,
+  path = NULL, metadata = "datastorr.json", branch = "master",
+  private = FALSE, refetch = FALSE, target = NULL,
+  ignore_dirty = FALSE, yes = !interactive())
 }
 \arguments{
 \item{repo}{Either a github repo in the form

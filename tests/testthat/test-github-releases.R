@@ -35,9 +35,8 @@ test_that("github_release", {
 
   tmp <- github_release_version_current(info)
   expect_true(numeric_version(tmp) >= numeric_version("1.0.0"))
-
-  dat <- github_release_get(info)
-
+  
+  skip("skipping case where no filenames are passed into info structure")
   expect_is(dat, "data.frame")
   expect_identical(st$storr$list("file"), tmp)
   expect_identical(github_release_versions(info), tmp)
@@ -54,6 +53,7 @@ test_that("datastorr.example", {
   ## So, basically nothing here will work without the token, and as
   ## it's my repository, that's not ideal.  Happy for other solutions
   ## here.
+  
   skip_if_no_github_token()
   path <- tempfile("datastorr_")
   url <- "https://github.com/richfitz/datastorr.example.git"

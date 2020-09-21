@@ -23,7 +23,7 @@
 ##'   this is omitted then GitHub will display the commit message from
 ##'   the commit that the release points at.
 ##'
-##' @param filename Filename to upload; optional if in \code{info}.
+##' @param filenames Filename to upload; optional if in \code{info}.
 ##'   If listed in \code{info}, \code{filename} can be different but
 ##'   the file will be renamed to \code{info$filename} on uploading.
 ##'   If given but not in \code{info}, the uploaded file will be
@@ -42,40 +42,51 @@
 ##'   known to git are ignored (as are files that are ignored by git).
 ##'   But you must have no uncommited changes or staged but uncommited
 ##'   files.
+##'   
+##' @param  binary Arguement to determine whether to upload binaries, 
+##'   or default to the source code generated in a version. If \code{binary}
+##'   is \code{FALSE}, users can only pull \code{Source.zip} for that
+##'   particular version.
 ##'
 ##' @param yes Skip the confirmation prompt?  Only prompts if
 ##'   interactive.
 ##'
 ##' @export
-github_release_create <- function(info, description = NULL, filename = NULL,
-                                  target = NULL, ignore_dirty = FALSE,
+github_release_create <- function(info, description = NULL, filenames = NULL,
+                                  target = NULL, ignore_dirty = FALSE, binary = TRUE, 
                                   yes = !interactive()) {
-  if (is.null(filename)) {
-    if (is.null(info$filename)) {
-      stop("filename must be given")
+  if(binary) {
+    if (is.null(filenames)) {
+      if (is.null(info$filenames)) {
+        stop("list of filenames must be given")
+      }
+      filenames <- info$filenames
     }
-    filename <- info$filename
-  }
-  if (!file.exists(filename)) {
-    stop(sprintf("File %s not found", filename))
-  }
-  if (is.null(info$filename)) {
-    info$filename <- basename(filename)
-  } else if (grepl("/", info$filename, fixed = TRUE)) {
-    stop("Expected path-less info$filename")
+    # check if multple files exist (utils.R)
+    verify_files(filenames)
+  
+  
+    fill_info_files(info, filenames)
   }
 
   dat <- github_release_package_info(info, target)
 
-  github_release_create_(info, dat, filename, version, description,
+  github_release_create_(info, dat, filenames, binary, version, description,
                          ignore_dirty, yes)
 }
 
-github_release_create_ <- function(info, dat, filename, version, description,
+github_release_create_ <- function(info, dat, filename, binary, version, description,
                                    ignore_dirty, yes) {
-  if (!file.exists(filename)) {
-    stop("Filename does not exist: ", filename)
+  if(binary) {
+    verify_files(filename)
+    
+    ftarget <- if (is.null(info$filename)) basename(filename) else info$filename
+    
+    ## TODO: will this fail in the case where info$filename is null?
+    msg_file <- sprintf("  file: %s (as %s) %.2f KB", filename, ftarget,
+                        file.info(filename)$size / 1024)
   }
+  
   github_release_preflight(dat, ignore_dirty)
 
   ## This is the complicated bit of the message; enough context to
@@ -93,16 +104,10 @@ github_release_create_ <- function(info, dat, filename, version, description,
   version <- add_v(dat$version_local)
   target <- dat$sha_local
 
-  ftarget <- if (is.null(info$filename)) basename(filename) else info$filename
-
-  ## TODO: will this fail in the case where info$filename is null?
-  msg_file <- sprintf("  file: %s (as %s) %.2f KB", filename, ftarget,
-                      file.info(filename)$size / 1024)
-
   message("Will create release:")
   message("  tag: ", version)
   message(paste(msg_at, collapse = "\n"))
-  message(msg_file)
+  if(binary) message(msg_file)
   message("  description: ",
           if (is.null(description)) "(no description)" else description)
 
@@ -111,8 +116,15 @@ github_release_create_ <- function(info, dat, filename, version, description,
   }
 
   ret <- github_api_release_create(info, version, description, target)
-  asset <- github_api_release_upload(info, version, filename, info$filename)
-  ret$assets <- list(asset)
+  
+  ## TODO: loop this to upload multiple files
+  if(binary) {
+    asset = list()
+    for(index in 1:length(filename)) {
+      asset[index] <- list(github_api_release_upload(info, version,filename[index], info$filename[index]))
+    }
+    ret$assets <- asset
+  } 
 
   message("Created release!")
   message("Please check the page to make sure everything is OK:\n",

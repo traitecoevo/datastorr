@@ -1,6 +1,7 @@
 context("simple")
 
 test_that("basic usage", {
+  skip("skipping case where no filenames are passed into info structure")
   d <- read.csv("example.csv", stringsAsFactors = FALSE)
   dd_contents <- lapply(d$dataset, get, as.environment("package:datasets"))
   names(dd_contents) <- d$version

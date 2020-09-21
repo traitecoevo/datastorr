@@ -6,8 +6,8 @@
 \title{Fetch data from a datastorr repository}
 \usage{
 datastorr(repo, path = NULL, metadata = "datastorr.json",
-  branch = "master", private = FALSE, refetch = FALSE, version = NULL,
-  extended = FALSE)
+  branch = "master", private = FALSE, refetch = FALSE,
+  version = NULL, extended = FALSE)
 
 datastorr_versions(..., local = TRUE)
 }

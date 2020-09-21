@@ -2,7 +2,7 @@
 
 Simple data retrieval and versioning using GitHub
 
-This project is described in a paper ([preprint here])(https://peerj.com/preprints/3401v1) by [Daniel Falster](https://github.com/dfalster/), [Rich FitzJohn](https://github.com/richfitz/), [Matthew Pennell](https://github.com/mwpennell/), and [Will Cornwell](https://github.com/wcornwell/). Below we describe the motivation and general idea. Please see the paper for full details.
+This project is described in a [paper](https://peerj.com/preprints/3401v1) by [Daniel Falster](https://github.com/dfalster/), [Rich FitzJohn](https://github.com/richfitz/), [Matt Pennell](https://github.com/mwpennell/), and [Will Cornwell](https://github.com/wcornwell/). Below we describe the motivation and general idea. Please see the paper for full details.
 
 ## The problem
 

@@ -1,6 +1,6 @@
 Package: datastorr
 Title: Simple Data Versioning
-Version: 0.0.3
+Version: 0.0.4
 Author: Rich FitzJohn
 Maintainer: Rich FitzJohn <rich.fitzjohn@gmail.com>
 Description: Simple dataversioning using GitHub to store data.
@@ -12,11 +12,13 @@ Imports:
     httr,
     jsonlite,
     rappdirs,
-    storr (>= 1.0.0)
+    storr (>= 1.0.0),
+    tibble, 
+    stringr
 Suggests:
     knitr,
     rmarkdown,
     testthat (>= 0.11.0),
     whisker
-RoxygenNote: 6.0.1
+RoxygenNote: 7.0.2
 VignetteBuilder: knitr

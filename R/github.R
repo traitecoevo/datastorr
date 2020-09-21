@@ -30,18 +30,26 @@
 ##' @export
 github_release_info <- function(repo, read, private = FALSE, filename = NULL,
                                 path = NULL) {
+  ## TODO: filename name argument
   if (is.null(path)) {
     path <- datastorr_path(repo)
   }
-  if (length(filename) > 1L) {
-    stop("Multiple filenames not yet handled")
+  ## case for single function types
+  if(!is.list(read)) {
+    read <- c(read)
   }
-  assert_function(read)
+  if (length(filename) != length(read) && !is.null(filename)) {
+    stop("Each file requires a respective read function")
+  } 
+  for(read_function in read) {
+    assert_function(read_function)
+  }
+
   structure(list(path = path, repo = repo, private = private,
-                 filename = filename, read = read),
+                 filenames = filename, 
+                 read = read),
             class = "github_release_info")
 }
-
 
 ##' Get release versions
 ##' @title Get release versions

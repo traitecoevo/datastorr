@@ -8,6 +8,38 @@ assert_function <- function(x, name = deparse(substitute(x))) {
   }
 }
 
+assert_file <- function(filename) {
+  if(!file.exists(filename)) {
+    stop(sprintf("%s doesn't exist or cannot be found", filename, call. = FALSE))
+  }
+}
+
+verify_files <- function(files) {
+  for(filename in files) {
+    assert_file(filename)
+  }
+}
+
+fill_info_files <- function(info, filenames) {
+  if(is.null(info$filenames)) {
+    info$filenames <- filenames
+  }
+  for(filename in info$filenames) {
+    if (grepl("/", filename, fixed = TRUE)) {
+      stop("Expected path-less info$filename")
+    }
+  }
+}
+
+create_version_filename = function(version, filename) {
+  paste0(version, "_", filename)
+}
+
+get_version_regex <- function(version) {
+  version_values <- unlist(stringr::str_match_all(version, pattern="\\d"))
+  paste0("^", version_values[1], "\\.", version_values[2], "\\.", version_values[3])
+}
+
 ## From dide-tools/encryptr:
 prompt_confirm <- function(msg = "continue?", valid = c(n = FALSE, y = TRUE),
                            default = names(valid)[[1]]) {
