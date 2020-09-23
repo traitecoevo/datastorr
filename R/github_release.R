@@ -62,23 +62,21 @@ github_release_create <- function(info, description = NULL, filenames = NULL,
       }
       filenames <- info$filenames
     }
-    # check if multple files exist (utils.R)
-    verify_files(filenames)
-  
-  
-    fill_info_files(info, filenames)
+    ## resolve abbreviated filenames 
+    resolved_filenames <- verify_files(filenames)
+    info$filenames <- resolved_filenames
+    fill_info_files(info, resolved_filenames)
   }
 
   dat <- github_release_package_info(info, target)
 
-  github_release_create_(info, dat, filenames, binary, version, description,
+  github_release_create_(info, dat, resolved_filenames, binary, version, description,
                          ignore_dirty, yes)
 }
 
 github_release_create_ <- function(info, dat, filename, binary, version, description,
                                    ignore_dirty, yes) {
   if(binary) {
-    verify_files(filename)
     
     ftarget <- if (is.null(info$filename)) basename(filename) else info$filename
     

@@ -2,6 +2,12 @@ vcapply <- function(X, FUN, ...) {
   vapply(X, FUN, character(1), ...)
 }
 
+stop_quietly <- function() {
+  opt <- options(show.error.messages = FALSE)
+  on.exit(options(opt))
+  stop()
+}
+
 assert_function <- function(x, name = deparse(substitute(x))) {
   if (!is.function(x)) {
     stop(sprintf("%s must be a function", name), call. = FALSE)
@@ -15,15 +21,36 @@ assert_file <- function(filename) {
 }
 
 verify_files <- function(files) {
+  ## Search through current working directory to resolve filename
+  local_files_dir <- list.files(path=".")
+  verified_filenames <- c()
+ 
   for(filename in files) {
-    assert_file(filename)
+    local_files_dir <- list.files(path=".")
+    resolved_filename <- local_files_dir[grepl(filename, local_files_dir )]
+    
+    if (length(resolved_filename) != 1) {
+      stop(paste0("Using file keyword \"", filename, "\" resolved none or multiple filenames.
+                  Please ensure that your file keyword matches exactly ONE filename in your working directory."))
+    } else { 
+      message(paste0("Matched keyword ", filename, " to ", resolved_filename))
+    } 
+    
+    if (interactive() && !prompt_confirm(paste0("Upload ", resolved_filename, "?"))) {
+      message("Stopping release")
+      stop_quietly()
+    }
+    
+    assert_file(resolved_filename)
+    verified_filenames <- c(verified_filenames, resolved_filename)
   }
+  
+  verified_filenames 
 }
 
 fill_info_files <- function(info, filenames) {
-  if(is.null(info$filenames)) {
-    info$filenames <- filenames
-  }
+  info$filenames <- filenames
+  
   for(filename in info$filenames) {
     if (grepl("/", filename, fixed = TRUE)) {
       stop("Expected path-less info$filename")
